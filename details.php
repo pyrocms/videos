@@ -31,14 +31,16 @@ class Module_Videos extends Module {
 		
 		$video_channels = "
 			CREATE TABLE " . $this->db->dbprefix('video_channels') . " (
-			  `id` int(11) NOT NULL auto_increment,
-			  `slug` varchar(20) collate utf8_unicode_ci NOT NULL default '',
-			  `title` varchar(20) collate utf8_unicode_ci NOT NULL default '',
-			  PRIMARY KEY  (`id`),
+			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `slug` varchar(20) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+			  `title` varchar(20) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+			  `description` text COLLATE utf8_unicode_ci,
+			  `thumbnail` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
+			  PRIMARY KEY (`id`),
 			  UNIQUE KEY `slug - unique` (`slug`),
 			  UNIQUE KEY `title - unique` (`title`),
 			  KEY `slug - normal` (`slug`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Video Channels.';
+			) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Video Channels.';
 		";
 
 		$video = "
@@ -47,25 +49,28 @@ class Module_Videos extends Module {
 			  `title` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
 			  `slug` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
 			  `channel_id` int(11) NOT NULL,
-			  `preview` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+			  `thumbnail` varchar(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+			  `intro` varchar(80) COLLATE utf8_unicode_ci NOT NULL,
 			  `description` text COLLATE utf8_unicode_ci NOT NULL,
+			  `tags` text COLLATE utf8_unicode_ci NOT NULL,
 			  `embed_code` text COLLATE utf8_unicode_ci NOT NULL,
 			  `width` int(4) NOT NULL,
 			  `height` int(4) NOT NULL,
 			  `views` int(10) unsigned NOT NULL DEFAULT '0',
-			  `status` enum('draft','live') collate utf8_unicode_ci NOT NULL default 'draft',
+			  `featured_on` int(10) unsigned DEFAULT NULL,
+			  `schedule_on` int(10) unsigned DEFAULT NULL,
 			  `user_id` int(11) NOT NULL DEFAULT '0',
 			  `created_on` int(11) NOT NULL,
 			  `updated_on` int(11) NOT NULL DEFAULT '0',
 			  `comments_enabled` int(1) NOT NULL DEFAULT '1',
-			  `tags` text COLLATE utf8_unicode_ci,
-			  PRIMARY KEY  (`id`),
+			  PRIMARY KEY (`id`),
 			  UNIQUE KEY `title` (`title`),
-			  KEY `channel_id - normal` (`channel_id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Videos.';
+			  KEY `channel_id - normal` (`channel_id`),
+			  FULLTEXT KEY `search` (`title`,`intro`,`tags`,`description`)
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Videos.';
 		";
 
-		$this->db->query("INSERT INTO  `itsmtv-happyninjas-com`.`default_settings` (
+		$this->db->query("INSERT INTO ".$this->db->dbprefix('settings')." (
 `slug` ,`title` ,`description` ,`type` ,`default` ,`value` ,`options` ,`is_required` ,`is_gui` ,`module` ,`order`)
 VALUES (
 	'video_thumb_size',  'Video Thumb Size',  'The width and height that video thumbnails will be resized to. E.g: 120x90.',  'text',  '120x90',  '',  '',  '1', '1',  'videos',  '0'
