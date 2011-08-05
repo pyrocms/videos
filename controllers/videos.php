@@ -90,7 +90,7 @@ class Videos extends Public_Controller
 			redirect('videos');
 		}
 
-		if ($video->status != 'live' && ! $this->ion_auth->is_admin())
+		if ($video->schedule_on > now() && ! $this->ion_auth->is_admin())
 		{
 			redirect('videos');
 		}
@@ -106,7 +106,7 @@ class Videos extends Public_Controller
 
 		$this->template->title($video->title, lang('video_video_title'))
 			->set_metadata('description', $video->description)
-			->set_metadata('keywords', $video->$tags)
+			->set_metadata('keywords', $video->tags)
 			->set_breadcrumb(lang('video:videos_title'), 'videos')
 			->set_breadcrumb($video->channel->title, 'video/channel/'.$video->channel->slug)
 			->set_breadcrumb($video->title)

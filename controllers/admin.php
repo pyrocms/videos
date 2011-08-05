@@ -173,6 +173,7 @@ class Admin extends Admin_Controller {
 
 				list($width, $height)=explode('x', Settings::get('video_thumb_size'));
 
+				$config['image_library'] = 'gd2';
 				$config['source_image']	= $thumbnail['file_path'];
 				$config['maintain_ratio'] = TRUE;
 				$config['width']	 = $width;
@@ -274,6 +275,7 @@ class Admin extends Admin_Controller {
 
 				list($width, $height)=explode('x', Settings::get('video_thumb_size'));
 
+				$config['image_library'] = 'gd2';
 				$config['source_image']	= $thumbnail['file_path'];
 				$config['maintain_ratio'] = TRUE;
 				$config['width']	 = $width;

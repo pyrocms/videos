@@ -79,10 +79,12 @@ class Plugin_Videos extends Plugin
 			->get('videos')
 			->result();
 
-		// Custom width detected, lets do some awkward shit
-		if ($width)
+		$html = '';
+
+		foreach ($videos as &$video)
 		{
-			foreach ($videos as &$video)
+			// Custom width detected, lets do some awkward shit
+			if ($width)
 			{
 				$ratio = $width / $video->width;
 
@@ -97,9 +99,12 @@ class Plugin_Videos extends Plugin
 					'height="'.$new_height.'"',
 				), $video->embed_code);
 			}
+
+			// Single tag? Build up HTML
+			$this->content() or $html .= $video->embed_code;
 		}
 
-		return $videos;
+		return $this->content() ? $videos : $html;
 	}
 
 
