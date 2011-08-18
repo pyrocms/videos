@@ -2,7 +2,7 @@
 
 class Module_Videos extends Module {
 
-	public $version = '1.0';
+	public $version = '1.2.0';
 
 	public function info()
 	{
@@ -73,9 +73,11 @@ class Module_Videos extends Module {
 		$this->db->query("INSERT INTO ".$this->db->dbprefix('settings')." (
 `slug` ,`title` ,`description` ,`type` ,`default` ,`value` ,`options` ,`is_required` ,`is_gui` ,`module` ,`order`)
 VALUES (
-	'video_thumb_size',  'Video Thumb Size',  'The width and height that video thumbnails will be resized to. E.g: 120x90.',  'text',  '120x90',  '',  '',  '1', '1',  'videos',  '0'
+	'video_thumb_size',  'Video Thumbnail Size',  'The width and height that video thumbnails will be resized to. E.g: 120x90.',  'text',  '120x90',  '',  '',  '1', '1',  'videos',  '2'
 ), (
-	'video_display_size',  'Video Display Size',  'The width and height that videos will be displayed at on the website. E.g: 550x400.',  'text',  '550x400', '',  '',  '1',  '1',  'videos',  '0'
+	'video_display_width',  'Video Display Width',  'The width that videos will be displayed at on the website. E.g: 550.',  'text',  '550', '',  '',  '1',  '1',  'videos',  '3'
+), (
+	'video_thumb_enabled',  'Video Thumbnails Enabled?',  'Do you want thumbnails to be uploaded and displayed for videos and channels?',  'radio', '1', '1', '1=Enabled|0=Disabled',  '1',  '1',  'videos',  '1'
 );");
 
 		if ($this->db->query($video_channels) && $this->db->query($video))
@@ -94,7 +96,35 @@ VALUES (
 
 	public function upgrade($old_version)
 	{
-		// Your Upgrade Logic
+		switch ($old_version)
+		{
+			case '1.0':
+				$this->db->query("REPLACE INTO ".$this->db->dbprefix('settings')." (
+				`slug` ,`title` ,`description` ,`type` ,`default` ,`value` ,`options` ,`is_required` ,`is_gui` ,`module` ,`order`)
+				VALUES (
+					'video_thumb_enabled',  'Video Thumbnails',  'Do you want thumbnails to be uploaded and displayed for videos and channels?',  'radio', '1', '1', '1=Enabled|0=Disabled',  '1',  '1',  'videos',  '1'
+				), (
+					'video_display_width',  'Video Display Width',  'The width that videos will be displayed at on the website. E.g: 550.',  'text',  '550', '',  '',  '1',  '1',  'videos',  '3'
+				);");
+				
+				$this->db->delete('settings', array('slug' => 'video_display_size'));
+			
+			case '1.1':
+			
+				$this->load->dbforge();
+				
+				$this->dbforge->drop_column('videos', 'tags');
+				
+				$this->dbforge->add_column('videos', array(
+					'keywords' => array(
+						'type' => 'char',
+						'constraint' => 32,
+						'null' => false,
+					),
+				));
+			
+		}
+		
 		return TRUE;
 	}
 

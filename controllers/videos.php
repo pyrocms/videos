@@ -6,8 +6,8 @@ class Videos extends Public_Controller
 	{
 		parent::__construct();
 		
-		$this->load->model('video_m');
-		$this->load->model('video_channel_m');
+		$this->load->library('keywords/keywords');
+		$this->load->model(array('video_m', 'video_channel_m'));
 		$this->load->model('comments/comments_m');
 		$this->load->helper('text');
 		$this->lang->load('video');
@@ -66,7 +66,7 @@ class Videos extends Public_Controller
 
 		// Get the current page of video videos
 		$videos = $this->video_m->limit($pagination['limit'])->get_many_by(array(
-			'channel'=> $slug,
+			'video_channels.slug'=> $slug,
 			'schedule_on <=' => now(),
 		));
 
@@ -99,19 +99,62 @@ class Videos extends Public_Controller
 		{
 			redirect('videos');
 		}
+
+		if (json_decode($video->restricted_to))
+		{
+			$video->restricted_to = json_decode(',', $video->restricted_to);
+
+			// Are they logged in and an admin or a member of the correct group?
+			if ( ! $this->user OR (isset($this->user->group) AND $this->user->group != 'admin' AND ! in_array($this->user->group_id, $video->restricted_to)))
+			{
+				redirect('users/login/videos/view/'.$video->slug);
+			}
+		}
 		
+		// Convert keywords into something useful
+		$video->keywords = Keywords::get($video->keywords);
+		
+		// They want it a difference size? Lets resize it!
+		if (Settings::get('video_display_width') != $video->width)
+		{
+			$width = Settings::get('video_display_width');
+			$ratio = $width / $video->width;
+
+			$new_width = round($width);
+			$new_height = round($video->height * $ratio);
+
+			$video->embed_code = str_replace(array(
+				'width="'.$video->width.'"',
+				'height="'.$video->height.'"',
+			), array(
+				'width="'.$new_width.'"',
+				'height="'.$new_height.'"',
+			), $video->embed_code);
+		}
+
 		$video->channel = $channel;
 
 		$this->video_m->update_views($video->id);
 
-		$this->template->title($video->title, lang('video_video_title'))
+		// Find videos with the same tag
+		$related_videos = $this->video_m->get_related($video, 3);
+
+		$channel_videos = $this->video_m->limit(3)->get_many_by(array(
+			'channel_id' => $video->channel->id,
+			'videos.id !=' => $video->id,
+		));
+		
+		$this->template->title($video->title, $video->channel->title, lang('video:videos_title'))
 			->set_metadata('description', $video->description)
-			->set_metadata('keywords', $video->tags)
+			->set_metadata('keywords', implode(', ', $video->keywords))
 			->set_breadcrumb(lang('video:videos_title'), 'videos')
 			->set_breadcrumb($video->channel->title, 'video/channel/'.$video->channel->slug)
 			->set_breadcrumb($video->title)
-			->set('video', $video)
-			->build('view', $this->data);
+			->build('view', array(
+				'video' => $video,
+				'related_videos' => $related_videos,
+				'channel_videos' => $channel_videos,
+			));
 	}
 
 }

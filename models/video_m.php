@@ -13,25 +13,6 @@ class Video_m extends MY_Model {
 	}
 	
 
-	public function get_many_by($params = array())
-	{
-		if ( ! empty($params['channel']))
-		{
-			if (is_numeric($params['channel']))
-				$this->db->where('video_channels.id', $params['channel']);
-			else
-				$this->db->where('video_channels.slug', $params['channel']);
-		}
-
-		// Limit the results based on 1 number or 2 (2nd is offset)
-		if (isset($params['limit']) && is_array($params['limit']))
-			$this->db->limit($params['limit'][0], $params['limit'][1]);
-		elseif (isset($params['limit']))
-			$this->db->limit($params['limit']);
-
-		return $this->get_all();
-	}
-
 	public function get_search($query)
 	{
 		 return $this->db->query('
@@ -46,6 +27,31 @@ class Video_m extends MY_Model {
 		', array($query))->result();
 	}
 	
+	public function get_related($video, $limit = null)
+	{
+		if (empty($video->tags))
+		{
+			return array();
+		}
+
+		foreach (explode(',', $video->tags) as $tag)
+		{
+			$tag = trim($tag);
+	
+			$this->db
+				->or_like('tags', $tag.",", 'after')
+				->or_like('tags', $tag, 'before')
+				->or_like('tags', $tag.",", 'both')
+				->or_like('tags', $tag);
+		}
+
+		// TODO: CodeIgniter will shove this in without groupings . Hacked in view for now
+		// $this->db->where('id !=', $video->id);
+
+		$this->db->order_by('RAND()', null, false);
+
+		return $this->db->get('videos')->result();
+	}
 
 	public function count_by($params = array())
 	{

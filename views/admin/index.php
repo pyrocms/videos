@@ -11,7 +11,7 @@
 				<th width="70"><?php echo lang('video:date_label'); ?></th>
 				<th width="70"><?php echo lang('video:feature_label'); ?></th>
 				<th><?php echo lang('video:schedule_on_label'); ?></th>
-				<th width="180" class="align-center"><span><?php echo lang('video:actions_label'); ?></span></th>
+				<th width="180" class="align-center"><span><?php echo lang('global:actions'); ?></span></th>
 			</tr>
 		</thead>
 		<tfoot>
@@ -33,8 +33,8 @@
 					<td class="align-center buttons buttons-small">
 						<?php echo anchor('admin/videos/preview/' . $video->id, lang($video->schedule_on >= now() ? 'video:view_label' : 'video:preview_label'), 'rel="modal" class="iframe button preview" target="_blank"'); ?>
 						<?php echo anchor('admin/videos/feature/' . $video->id, lang('video:feature_label'), 'class="button feature"'); ?>
-						<?php echo anchor('admin/videos/edit/' . $video->id, lang('video:edit_label'), 'class="button edit"'); ?>
-						<?php echo anchor('admin/videos/delete/' . $video->id, lang('video:delete_label'), array('class'=>'confirm button delete')); ?>
+						<?php echo anchor('admin/videos/edit/' . $video->id, lang('global:edit'), 'class="button edit"'); ?>
+						<?php echo anchor('admin/videos/delete/' . $video->id, lang('global:delete'), array('class'=>'confirm button delete')); ?>
 					</td>
 				</tr>
 			<?php endforeach; ?>
