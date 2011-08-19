@@ -1,7 +1,7 @@
 <?php if ($this->method == 'create'): ?>
 	<h3><?php echo lang('video:create_title'); ?></h3>
 <?php else: ?>
-		<h3><?php echo sprintf(lang('video:edit_title'), $video->title); ?></h3>
+	<h3><?php echo sprintf(lang('video:edit_title'), $video->title); ?></h3>
 <?php endif; ?>
 
 <?php echo form_open_multipart(null, 'class="crud"'); ?>
@@ -75,6 +75,10 @@
 			<li>
 				<label for="schedule_on"><?php echo lang('video:schedule_on_label');?></label>
 				<?php echo form_input('schedule_on', $video->schedule_on ? $video->schedule_on : date('Y-m-d H:i'), array('class' => 'date', 'type' => 'datetime')); ?>
+			</li>
+			<li class="<?php echo alternator('even', ''); ?>">
+				<label for="restricted_to[]"><?php echo lang('video:access_label');?></label>
+				<?php echo form_multiselect('restricted_to[]', array(0 => lang('select.any')) + $group_options, $video->restricted_to, 'size="'.(($count = count($group_options)) > 1 ? $count : 2).'"'); ?>
 			</li>
 			<li class="<?php echo alternator('even', ''); ?>">
 				<label for="restricted_to[]"><?php echo lang('video:access_label');?></label>

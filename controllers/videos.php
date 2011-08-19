@@ -1,5 +1,10 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
-
+/**
+ * @author 		PyroCMS Dev Team
+ * @package 	PyroCMS
+ * @subpackage 	Modules
+ * @category 	Videos
+ */
 class Videos extends Public_Controller
 {
 	public function __construct()
