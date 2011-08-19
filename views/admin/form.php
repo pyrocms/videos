@@ -26,17 +26,20 @@
 				<?php echo site_url('videos/view') ?>/<?php echo form_input('slug', $video->slug, 'maxlength="100" class="width-20"'); ?>
 				<span class="required-icon tooltip"><?php echo lang('required_label'); ?></span>
 			</li>
+			
+			<?php if (Settings::get('video_thumb_enabled')): ?>
 			<li>
 				<label for="thumbnail"><?php echo lang('video:thumbnail_label'); ?></label>
 	
 				<div style="float:left">
 					<?php echo form_upload('thumbnail'); ?>
 
-					<?php if ($video->thumbnail): ?>
-						<br /><img src="<?php echo base_url().UPLOAD_PATH ?>videos/thumbs/<?php echo $video->thumbnail ?>" />
+					<?php if ( ! empty($video->thumbnail)): ?>
+						<br /><img src="<?php echo base_url(UPLOAD_PATH.'videos/thumbs/'.$video->thumbnail) ?>" />
 					<?php endif; ?>
 				</div>
 			</li>
+			<? endif; ?>
 			<li class="even">
 				<label for="channel_id"><?php echo lang('video:channel_label'); ?></label>
 				<?php echo form_dropdown('channel_id', array(lang('video:no_channel_select_label')) + $channels, $video->channel_id) ?>
@@ -48,41 +51,38 @@
 				<span class="required-icon tooltip"><?php echo lang('required_label'); ?></span>
 			</li>
 			<li class="even">
+				<label for="keywords"><?php echo lang('global:keywords'); ?></label>
+				<?php echo form_input('keywords', $video->keywords); ?>
+			</li>
+			<li>
 				<label class="description" for="description"><?php echo lang('video:description_label'); ?></label>
 				<?php echo form_textarea(array('name' => 'description', 'value' => $video->description, 'rows' => 5, 'class' => 'wysiwyg-simple')); ?>
-			</li>
-			<li>
-				<label for="tags"><?php echo lang('video:tags_label'); ?></label>
-				<?php echo form_input('tags', $video->tags); ?>
-			</li>
-			<li>
-				<label for="embed_code"><?php echo lang('video:embed_code_label'); ?></label>
-				<?php echo form_textarea('embed_code', $video->embed_code); ?>
 				<span class="required-icon tooltip"><?php echo lang('required_label'); ?></span>
 			</li>
 			<li class="even">
-				<label for="width"><?php echo lang('video:width_label'); ?></label>
-				<?php echo form_input('width', $video->width); ?>
+				<label for="embed_code"><?php echo lang('video:embed_code_label'); ?></label>
+				<?php echo form_textarea('embed_code', $video->embed_code); ?>
 				<span class="required-icon tooltip"><?php echo lang('required_label'); ?></span>
-			</li>
-			<li>
-				<label for="height"><?php echo lang('video:height_label'); ?></label>
-				<?php echo form_input('height', $video->height); ?>
-				<span class="required-icon tooltip"><?php echo lang('required_label'); ?></span>
+				<?php echo form_hidden('width', $video->width); ?>
+				<?php echo form_hidden('height', $video->height); ?>
 			</li>
 		</ul>
 	</div>
 
-	<!-- Options tab -->
+	<!-- Options tab --> 	
 	<div id="video-options-tab">
 		<ul>
 			<li>
 				<label for="schedule_on"><?php echo lang('video:schedule_on_label');?></label>
-				<?php echo form_input('schedule_on', $video->schedule_on ? $video->schedule_on : date('Y-m-d H:i'), array('class' => 'date')); ?>
+				<?php echo form_input('schedule_on', $video->schedule_on ? $video->schedule_on : date('Y-m-d H:i'), array('class' => 'date', 'type' => 'datetime')); ?>
+			</li>
+			<li class="<?php echo alternator('even', ''); ?>">
+				<label for="restricted_to[]"><?php echo lang('video:access_label');?></label>
+				<?php echo form_multiselect('restricted_to[]', array(0 => lang('select.any')) + $group_options, $video->restricted_to, 'size="'.(($count = count($group_options)) > 1 ? $count : 2).'"'); ?>
 			</li>
 			<li>
 				<label for="comments_enabled"><?php echo lang('video:comments_enabled_label');?></label>
-				<?php echo form_checkbox('comments_enabled', 1, $video->comments_enabled == 1); ?>
+				<?php echo form_checkbox('comments_enabled', 1, ($this->method == 'create' && ! $_POST) or $video->comments_enabled == 1); ?>
 			</li>
 		</ul>
 	</div>

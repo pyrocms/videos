@@ -9,7 +9,7 @@
 		<tr>
 			<th width="20"><?php echo form_checkbox(array('name' => 'action_to_all', 'class' => 'check-all')); ?></th>
 			<th><?php echo lang('video:channel_label'); ?></th>
-			<th width="200" class="align-center"><span><?php echo lang('video:actions_label'); ?></span></th>
+			<th width="200" class="align-center"><span><?php echo lang('global:actions'); ?></span></th>
 		</tr>
 		</thead>
 		<tfoot>
@@ -25,8 +25,8 @@
 				<td><?php echo form_checkbox('action_to[]', $channel->id); ?></td>
 				<td><?php echo $channel->title; ?></td>
 				<td class="align-center buttons buttons-small">
-					<?php echo anchor('admin/videos/channels/edit/' . $channel->id, lang('video:edit_label'), 'class="button edit"'); ?>
-					<?php echo anchor('admin/videos/channels/delete/' . $channel->id, lang('video:delete_label'), 'class="confirm button delete"') ;?>
+					<?php echo anchor('admin/videos/channels/edit/' . $channel->id, lang('global:edit'), 'class="button edit"'); ?>
+					<?php echo anchor('admin/videos/channels/delete/' . $channel->id, lang('global:delete'), 'class="confirm button delete"') ;?>
 				</td>
 			</tr>
 			<?php endforeach; ?>

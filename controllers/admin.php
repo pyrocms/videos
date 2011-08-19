@@ -30,8 +30,8 @@ class Admin extends Admin_Controller {
 			'rules' => 'trim|required|numeric'
 		),
 		array(
-			'field' => 'tags',
-			'label' => 'lang:video:tags_label',
+			'field' => 'keywords',
+			'label' => 'lang:global:keywords',
 			'rules' => 'trim'
 		),
 		array(
@@ -60,6 +60,11 @@ class Admin extends Admin_Controller {
 			'rules' => 'trim|required|numeric'
 		),
 		array(
+			'field' => 'restricted_to[]',
+			'label'	=> 'lang:video:access_label',
+			'rules'	=> 'trim|numeric'
+		),
+		array(
 			'field' => 'schedule_on',
 			'label' => 'lang:video:schedule_on_label',
 			'rules' => 'trim|required'
@@ -80,6 +85,7 @@ class Admin extends Admin_Controller {
 	{
 		parent::__construct();
 
+		$this->load->library('keywords/keywords');
 		$this->load->model('video_m');
 		$this->load->model('video_channel_m');
 		$this->lang->load('video');
@@ -148,7 +154,7 @@ class Admin extends Admin_Controller {
 				'slug'				=> $this->input->post('slug'),
 				'channel_id'		=> $this->input->post('channel_id'),
 				'intro'				=> $this->input->post('intro'),
-				'tags'				=> $this->input->post('tags'),
+				'keywords'			=> Keywords::process($this->input->post('keywords')),
 				'description'		=> $this->input->post('description'),
 				'embed_code'		=> $this->input->post('embed_code'),
 				'width'				=> $this->input->post('width'),
@@ -156,6 +162,7 @@ class Admin extends Admin_Controller {
 				'schedule_on'		=> $this->input->post('schedule_on') ? strtotime($this->input->post('schedule_on')) : now(),
 				'created_on'		=> $this->input->post('created_on') ? strtotime($this->input->post('created_on')) : now(),
 				'comments_enabled'	=> $this->input->post('comments_enabled'),
+				'restricted_to' 	=> $this->input->post('restricted_to') ? json_encode($this->input->post('restricted_to')) : '',
 			);
 
 			if ( ! empty($_FILES['thumbnail']['name']))
@@ -207,13 +214,27 @@ class Admin extends Admin_Controller {
 		else
 		{
 			// Go through all the known fields and get the post values
-			foreach ($this->validation_rules as $key => $field)
+			foreach ($this->validation_rules as $rule)
 			{
-				$video->$field['field'] = set_value($field['field']);
+				if ($rule['field'] === 'restricted_to[]')
+				{
+					$video->restricted_to = set_value($rule['field']);
+
+					continue;
+				}
+				$video->$rule['field'] = set_value($rule['field']);
 			}
 		}
 
 		display:
+
+		$this->load->model('groups/group_m');
+		$groups = $this->group_m->get_all();
+		foreach($groups as $group)
+		{
+			$group->name !== 'admin' && $group_options[$group->id] = $group->name;
+		}
+		$this->template->group_options = $group_options;
 
 		$this->template
 			->title($this->module_details['name'], lang('video:create_title'))
@@ -238,6 +259,12 @@ class Admin extends Admin_Controller {
 		$this->form_validation->set_rules($this->validation_rules);
 
 		$video = $this->video_m->get($id);
+		
+		
+		$video->keywords = Keywords::get_string($video->keywords);
+
+		// It's stored as a CSV list
+		$video->restricted_to = json_decode($video->restricted_to);
 
 		$this->id = $video->id;
 		
@@ -250,7 +277,7 @@ class Admin extends Admin_Controller {
 				'slug'				=> $this->input->post('slug'),
 				'channel_id'		=> $this->input->post('channel_id'),
 				'intro'				=> $this->input->post('intro'),
-				'tags'				=> $this->input->post('tags'),
+				'keywords'			=> Keywords::process($this->input->post('keywords')),
 				'description'		=> $this->input->post('description'),
 				'embed_code'		=> $this->input->post('embed_code'),
 				'width'				=> $this->input->post('width'),
@@ -258,6 +285,7 @@ class Admin extends Admin_Controller {
 				'schedule_on'		=> $this->input->post('schedule_on') ? strtotime($this->input->post('schedule_on')) : now(),
 				'created_on'		=> $this->input->post('created_on') ? strtotime($this->input->post('created_on')) : now(),
 				'comments_enabled'	=> $this->input->post('comments_enabled'),
+				'restricted_to' 	=> $this->input->post('restricted_to') ? json_encode($this->input->post('restricted_to')) : '',	
 			);
 
 			if ( ! empty($_FILES['thumbnail']['name']))
@@ -307,15 +335,30 @@ class Admin extends Admin_Controller {
 		}
 
 		// Go through all the known fields and get the post values
-		foreach (array_keys($this->validation_rules) as $field)
+		foreach ($this->validation_rules as $rule)
 		{
-			if (isset($_POST[$field]))
+			if ($rule['field'] === 'restricted_to[]')
 			{
-				$video->$field = $this->form_validation->$field;
+				$video->restricted_to = set_value($rule['field'], $video->restricted_to);
+				continue;
+			}
+
+			if (isset($_POST[$rule['field']]))
+			{
+				$video->{$rule['field']} = $this->form_validation->{$rule['field']};
 			}
 		}
+		$video->schedule_on = date('Y-m-d h:i:s', $video->schedule_on);
 
 		display:
+
+		$this->load->model('groups/group_m');
+		$groups = $this->group_m->get_all();
+		foreach($groups as $group)
+		{
+			$group->name !== 'admin' && $group_options[$group->id] = $group->name;
+		}
+		$this->template->group_options = $group_options;
 
 		$this->template
 			->title($this->module_details['name'], sprintf(lang('video:edit_title'), $video->title))

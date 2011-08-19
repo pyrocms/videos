@@ -6,7 +6,7 @@
 
 <?php endif; ?>
 
-<?php echo form_open($this->uri->uri_string(), 'class="crud" id="channels"'); ?>
+<?php echo form_open('', 'class="crud" id="channels"'); ?>
 
 <fieldset>
 	<ul>
@@ -16,15 +16,16 @@
 			<span class="required-icon tooltip"><?php echo lang('required_label');?></span>
 		</li>
 		<li>
-			<label for="description"><?php echo lang('video:description_label');?></label>
+			<label for="description"><?php echo lang('global:description');?></label>
 			<?php echo  form_textarea('description', $channel->description); ?>
 			<span class="required-icon tooltip"><?php echo lang('required_label');?></span>
 		</li>
+		<?php if (Settings::get('video_thumb_enabled')): ?>
 		<li class="even">
-			<label for="thumbnail"><?php echo lang('video_channel:thumbnail_label');?></label>
+			<label for="thumbnail"><?php echo lang('video:thumbnail_label');?></label>
 			<?php echo  form_upload('thumbnail'); ?>
-			<span class="required-icon tooltip"><?php echo lang('required_label');?></span>
 		</li>
+		<?php endif ?>
 	</ul>
 
 	<div class="buttons float-right padding-top">
