@@ -32,12 +32,12 @@ class Admin extends Admin_Controller {
 		array(
 			'field' => 'keywords',
 			'label' => 'lang:global:keywords',
-			'rules' => 'trim'
+			'rules' => 'trim',
 		),
 		array(
 			'field' => 'intro',
 			'label' => 'lang:video:intro_label',
-			'rules' => 'trim|required'
+			'rules' => 'trim|max_length[80]|required',
 		),
 		array(
 			'field' => 'description',
@@ -180,8 +180,7 @@ class Admin extends Admin_Controller {
 
 				list($width, $height)=explode('x', Settings::get('video_thumb_size'));
 
-				$config['image_library'] = 'gd2';
-				$config['source_image']	= $thumbnail['file_path'];
+				$config['source_image']	= $thumbnail['full_path'];
 				$config['maintain_ratio'] = TRUE;
 				$config['width']	 = $width;
 				$config['height']	= $height;
@@ -303,8 +302,7 @@ class Admin extends Admin_Controller {
 
 				list($width, $height)=explode('x', Settings::get('video_thumb_size'));
 
-				$config['image_library'] = 'gd2';
-				$config['source_image']	= $thumbnail['file_path'];
+				$config['source_image']	= $thumbnail['full_path'];
 				$config['maintain_ratio'] = TRUE;
 				$config['width']	 = $width;
 				$config['height']	= $height;

@@ -35,7 +35,7 @@
 					<?php echo form_upload('thumbnail'); ?>
 
 					<?php if ( ! empty($video->thumbnail)): ?>
-						<br /><img src="<?php echo base_url(UPLOAD_PATH.'videos/thumbs/'.$video->thumbnail) ?>" />
+						<br /><img src="<?php echo base_url().UPLOAD_PATH.'videos/thumbs/'.$video->thumbnail ?>" />
 					<?php endif; ?>
 				</div>
 			</li>
@@ -57,7 +57,7 @@
 			<li>
 				<label class="description" for="description"><?php echo lang('video:description_label'); ?></label>
 				<?php echo form_textarea(array('name' => 'description', 'value' => $video->description, 'rows' => 5, 'class' => 'wysiwyg-simple')); ?>
-				<span class="required-icon tooltip"><?php echo lang('required_label'); ?></span>
+				<span class="required-icon tooltip"><1?php echo lang('required_label'); ?></span>
 			</li>
 			<li class="even">
 				<label for="embed_code"><?php echo lang('video:embed_code_label'); ?></label>
