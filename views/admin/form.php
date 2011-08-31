@@ -69,12 +69,18 @@
 		</ul>
 	</div>
 
-	<!-- Options tab --> 	
+	<!-- Options tab -->
 	<div id="video-options-tab">
 		<ul>
-			<li>
+			<li class="date-meta">
 				<label for="schedule_on"><?php echo lang('video:schedule_on_label');?></label>
-				<?php echo form_input('schedule_on', $video->schedule_on ? $video->schedule_on : date('Y-m-d H:i'), array('class' => 'date', 'type' => 'datetime')); ?>
+				<div style="float:left;">
+					<?php echo form_input('schedule_on', date('Y-m-d', $video->schedule_on), 'maxlength="10" id="datepicker" class="text width-20"'); ?>
+				</div>
+				<label class="time-meta"><?php echo lang('video:time_label'); ?></label>
+				<?php echo form_dropdown('schedule_on_hour', $hours, date('H', $video->schedule_on)) ?>
+				<?php echo form_dropdown('schedule_on_minute', $minutes, date('i', $video->schedule_on)) ?>
+				
 			</li>
 			<li class="<?php echo alternator('even', ''); ?>">
 				<label for="restricted_to[]"><?php echo lang('video:access_label');?></label>
@@ -98,3 +104,15 @@
 </div>
 
 <?php echo form_close(); ?>
+
+
+<style type="text/css">
+form.crudli.date-meta div.selector {
+    float: left;
+    width: 30px;
+}
+form.crud li.date-meta div input#datepicker { width: 8em; }
+form.crud li.date-meta div.selector { width: 5em; }
+form.crud li.date-meta div.selector span { width: 1em; }
+form.crud li.date-meta label.time-meta { min-width: 4em; width:4em; }
+</style>

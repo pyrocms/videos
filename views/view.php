@@ -15,7 +15,7 @@
 	<div class="details">
 		
 		<ul>
-			<li class="date"><span class="date-label"><?php echo lang('video:video_label');?>: </span><?php echo format_date($video->created_on); ?></li>
+			<li class="date"><span class="date-label"><?php echo lang('video:date_label');?>: </span><?php echo format_date($video->created_on); ?></li>
 			
 			<li class="channel">
 				<?php echo lang('video:channel_label');?>: <?php echo anchor('videos/channel/'.$video->channel->slug, $video->channel->title);?>

@@ -146,9 +146,19 @@ class Admin extends Admin_Controller {
 		$this->load->library('form_validation');
 
 		$this->form_validation->set_rules($this->validation_rules);
-
-		if ($this->form_validation->run())
+		
+		if ($this->input->post('schedule_on'))
 		{
+			$schedule_on = strtotime(sprintf('%s %s:%s', $this->input->post('schedule_on'), $this->input->post('schedule_on_hour'), $this->input->post('schedule_on_minute')));
+		}
+
+		else
+		{
+			$schedule_on = now();
+		}
+		
+		if ($this->form_validation->run())
+		{	
 			$input = array(
 				'title'				=> $this->input->post('title'),
 				'slug'				=> $this->input->post('slug'),
@@ -159,56 +169,42 @@ class Admin extends Admin_Controller {
 				'embed_code'		=> $this->input->post('embed_code'),
 				'width'				=> $this->input->post('width'),
 				'height'			=> $this->input->post('height'),
-				'schedule_on'		=> $this->input->post('schedule_on') ? strtotime($this->input->post('schedule_on')) : now(),
-				'created_on'		=> $this->input->post('created_on') ? strtotime($this->input->post('created_on')) : now(),
+				'schedule_on'		=> $schedule_on,
+				'created_on'		=> now(),
 				'comments_enabled'	=> $this->input->post('comments_enabled'),
 				'restricted_to' 	=> $this->input->post('restricted_to') ? json_encode($this->input->post('restricted_to')) : '',
 			);
 
 			if ( ! empty($_FILES['thumbnail']['name']))
 			{
-				$this->_prep_upload();
-
-				if ( ! $this->upload->do_upload('thumbnail'))
+				if ( ! self::_upload())
 				{
 					$this->template->messages = array('error' => $this->upload->display_errors());
-					
 					goto display;
 				}
 
-				$thumbnail = $this->upload->data();
-
-				list($width, $height)=explode('x', Settings::get('video_thumb_size'));
-
-				$config['source_image']	= $thumbnail['full_path'];
-				$config['maintain_ratio'] = TRUE;
-				$config['width']	 = $width;
-				$config['height']	= $height;
-
-				$this->load->library('image_lib', $config); 
-				
-				if ( ! $this->image_lib->resize())
+				if ( ! self::_resize())
 				{
 					$this->template->messages = array('error' => $this->image_lib->display_errors());
-					
 					goto display;
 				}
-
+				
+				$thumbnail = $this->upload->data();
 				$input['thumbnail'] = $thumbnail['file_name'];
 			}
 
-			if ($this->video_m->insert($input))
+			if (($id = $this->video_m->insert($input)))
 			{
 				$this->pyrocache->delete_all('video_m');
-				$this->session->set_flashdata('success', sprintf($this->lang->line('video:video_add_success'), $this->input->post('title')));
+				$this->session->set_flashdata('success', sprintf(lang('video:video_add_success'), $this->input->post('title')));
 			}
 			else
 			{
-				$this->session->set_flashdata('error', $this->lang->line('video:post_add_error'));
+				$this->session->set_flashdata('error', lang('video:post_add_error'));
 			}
 
 			// Redirect back to the form or main page
-			$this->input->post('btnAction') == 'save_exit' ? redirect('admin/videos') : redirect('admin/videos/edit/' . $id);
+			$this->input->post('btnAction') == 'save_exit' ? redirect('admin/videos') : redirect('admin/videos/edit/'.$id);
 		}
 		else
 		{
@@ -218,22 +214,16 @@ class Admin extends Admin_Controller {
 				if ($rule['field'] === 'restricted_to[]')
 				{
 					$video->restricted_to = set_value($rule['field']);
-
 					continue;
 				}
 				$video->$rule['field'] = set_value($rule['field']);
 			}
+			$video->schedule_on = $schedule_on;
 		}
 
 		display:
 
-		$this->load->model('groups/group_m');
-		$groups = $this->group_m->get_all();
-		foreach($groups as $group)
-		{
-			$group->name !== 'admin' && $group_options[$group->id] = $group->name;
-		}
-		$this->template->group_options = $group_options;
+		self::_form_data();
 
 		$this->template
 			->title($this->module_details['name'], lang('video:create_title'))
@@ -259,7 +249,6 @@ class Admin extends Admin_Controller {
 
 		$video = $this->video_m->get($id);
 		
-		
 		$video->keywords = Keywords::get_string($video->keywords);
 
 		// It's stored as a CSV list
@@ -267,9 +256,19 @@ class Admin extends Admin_Controller {
 
 		$this->id = $video->id;
 		
+		if ($this->input->post('schedule_on'))
+		{
+			$schedule_on = strtotime(sprintf('%s %s:%s', $this->input->post('schedule_on'), $this->input->post('schedule_on_hour'), $this->input->post('schedule_on_minute')));
+		}
+
+		else
+		{
+			$schedule_on = $video->schedule_on;
+		}
+		
 		if ($this->form_validation->run())
-		{  
-			$author_id = empty($post->author) ? $this->user->id : $post->author_id;
+		{	
+			$author_id = empty($post->author) ? $this->current_user->id : $post->author_id;
 
 			$input = array(
 				'title'				=> $this->input->post('title'),
@@ -281,41 +280,27 @@ class Admin extends Admin_Controller {
 				'embed_code'		=> $this->input->post('embed_code'),
 				'width'				=> $this->input->post('width'),
 				'height'			=> $this->input->post('height'),
-				'schedule_on'		=> $this->input->post('schedule_on') ? strtotime($this->input->post('schedule_on')) : now(),
-				'created_on'		=> $this->input->post('created_on') ? strtotime($this->input->post('created_on')) : now(),
+				'schedule_on'		=> $schedule_on,
+				'updated_on'		=> now(),
 				'comments_enabled'	=> $this->input->post('comments_enabled'),
 				'restricted_to' 	=> $this->input->post('restricted_to') ? json_encode($this->input->post('restricted_to')) : '',	
 			);
 
 			if ( ! empty($_FILES['thumbnail']['name']))
 			{
-				$this->_prep_upload();
-
-				if ( ! $this->upload->do_upload('thumbnail'))
+				if ( ! self::_upload())
 				{
 					$this->template->messages = array('error' => $this->upload->display_errors());
-					
 					goto display;
 				}
 
-				$thumbnail = $this->upload->data();
-
-				list($width, $height)=explode('x', Settings::get('video_thumb_size'));
-
-				$config['source_image']	= $thumbnail['full_path'];
-				$config['maintain_ratio'] = TRUE;
-				$config['width']	 = $width;
-				$config['height']	= $height;
-
-				$this->load->library('image_lib', $config); 
-
-				if ( ! $this->image_lib->resize())
+				if ( ! self::_resize())
 				{
-					$this->template->messages = array('error' => $this->image_lib->display_errors());
-					
+					$this->template->messages = array('error' => $this->image_lib->display_errors());	
 					goto display;
 				}
 				
+				$thumbnail = $this->upload->data();
 				$input['thumbnail'] = $thumbnail['file_name'];
 			}
 
@@ -329,9 +314,12 @@ class Admin extends Admin_Controller {
 			}
 
 			// Redirect back to the form or main page
-			$this->input->post('btnAction') == 'save_exit' ? redirect('admin/videos') : redirect('admin/videos/edit/' . $id);
+			$this->input->post('btnAction') == 'save_exit' ? redirect('admin/videos') : redirect('admin/videos/edit/'.$id);
 		}
 
+		// Goto keyword for "displaying" stuff
+		display:
+		
 		// Go through all the known fields and get the post values
 		foreach ($this->validation_rules as $rule)
 		{
@@ -346,17 +334,10 @@ class Admin extends Admin_Controller {
 				$video->{$rule['field']} = $this->form_validation->{$rule['field']};
 			}
 		}
-		$video->schedule_on = date('Y-m-d h:i:s', $video->schedule_on);
+		
+		$video->schedule_on = $schedule_on;
 
-		display:
-
-		$this->load->model('groups/group_m');
-		$groups = $this->group_m->get_all();
-		foreach($groups as $group)
-		{
-			$group->name !== 'admin' && $group_options[$group->id] = $group->name;
-		}
-		$this->template->group_options = $group_options;
+		self::_form_data();
 
 		$this->template
 			->title($this->module_details['name'], sprintf(lang('video:edit_title'), $video->title))
@@ -366,7 +347,7 @@ class Admin extends Admin_Controller {
 			->build('admin/form');
 	}
 
-	private function _prep_upload()
+	private function _upload()
 	{
 		$upload_path = UPLOAD_PATH.'videos/thumbs/';
 		is_dir($upload_path) or mkdir($upload_path, 0777, true);
@@ -378,8 +359,40 @@ class Admin extends Admin_Controller {
 		$config['max_height']  = '800';
 
 		$this->load->library('upload', $config);
+		
+		return $this->upload->do_upload('thumbnail');
 	}
 
+	private function _resize()
+	{
+		$thumbnail = $this->upload->data();
+
+		list($width, $height)=explode('x', Settings::get('video_thumb_size'));
+
+		$config['source_image']	= $thumbnail['full_path'];
+		$config['maintain_ratio'] = TRUE;
+		$config['width']	 = $width;
+		$config['height']	= $height;
+
+		$this->load->library('image_lib', $config); 
+		return $this->image_lib->resize();
+	}
+	
+	private function _form_data()
+	{	
+		$this->load->model('groups/group_m');
+		$groups = $this->group_m->get_all();
+		foreach ($groups as $group)
+		{
+			$group->name !== 'admin' && $group_options[$group->id] = $group->name;
+		}
+		
+		$this->template->set(array(
+			'group_options' => $group_options,
+			'hours' => array_combine($hours = range(0, 23), $hours),
+			'minutes' => array_combine($minutes = range(0, 59), $minutes),
+		));
+	}
 
 	/**
 	 * Preview video

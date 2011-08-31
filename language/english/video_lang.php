@@ -8,6 +8,7 @@ $lang['video:view_label']                     = 'View';
 $lang['video:preview_label']                  = 'Preview';
 $lang['video:feature_label']                  = 'Feature';
 $lang['video:date_label']                     = 'Date';
+$lang['video:time_label']                     = 'Time';
 $lang['video:details_label']                  = 'Details';
 $lang['video:options_label']                  = 'Options';
 $lang['video:title_label']                    = 'Title';

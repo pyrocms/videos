@@ -17,10 +17,10 @@ class Plugin_Videos extends Plugin
 	 * Creates a list of blog posts
 	 *
 	 * Usage:
-	 * {pyro:videos:list order-by="title" limit="5"}
+	 * {pyro:videos:videos order-by="title" limit="5"}
 	 *	<h2>{pyro:title}</h2>
 	 *	{pyro:embed_code}
-	 * {/pyro:videos:list}
+	 * {/pyro:videos:videos}
 	 *
 	 * @param	array
 	 * @return	array
@@ -37,14 +37,16 @@ class Plugin_Videos extends Plugin
 			$this->db->where('c.' . (is_numeric($channel) ? 'id' : 'slug'), $channel);
 		}
 
-		return $this->db
+		$foo = $this->db
 			->select('videos.*, video_channels.title as channel_title, video_channels.slug as channel_slug')
 			->where('schedule_on <=', now())
 			->join('video_channels', 'videos.channel_id = video_channels.id', 'LEFT')
 			->order_by('videos.' . $order_by, $order_dir)
 			->limit($limit)
 			->get('videos')
-			->result_array();
+			->result();
+			
+			var_dump($foo);
 	}
 	
 	/**
@@ -94,9 +96,13 @@ class Plugin_Videos extends Plugin
 				$video->embed_code = str_replace(array(
 					'width="'.$video->width.'"',
 					'height="'.$video->height.'"',
+					'width:'.$video->width.'px',
+					'height:'.$video->height.'px',
 				), array(
 					'width="'.$new_width.'"',
 					'height="'.$new_height.'"',
+					'width:'.$new_width.'px',
+					'height:"'.$new_height.'px',
 				), $video->embed_code);
 			}
 
