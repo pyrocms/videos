@@ -34,10 +34,10 @@ class Plugin_Videos extends Plugin
 
 		if ($channel)
 		{
-			$this->db->where('c.' . (is_numeric($channel) ? 'id' : 'slug'), $channel);
+			$this->db->where('video_channels.' . (is_numeric($channel) ? 'id' : 'slug'), $channel);
 		}
 
-		$foo = $this->db
+		return $foo = $this->db
 			->select('videos.*, video_channels.title as channel_title, video_channels.slug as channel_slug')
 			->where('schedule_on <=', now())
 			->join('video_channels', 'videos.channel_id = video_channels.id', 'LEFT')
@@ -115,29 +115,39 @@ class Plugin_Videos extends Plugin
 
 
 	/**
-	 * Blog List
+	 * Channel List
 	 *
-	 * Creates a list of blog posts
+	 * Creates a list of channels
 	 *
 	 * Usage:
-	 * {pyro:videos:list order-by="title" limit="5"}
+	 * {pyro:videos:channels order-by="title" limit="5" include-count="yes"}
 	 *	<h2>{pyro:title}</h2>
-	 *	{pyro:embed_code}
-	 * {/pyro:videos:list}
+	 *	There are {pyro:video_count} video(s) in this channel
+	 * {/pyro:videos:channels}
 	 *
 	 * @param	array
 	 * @return	array
 	 */
 	public function channels()
 	{
-		$limit		= $this->attribute('limit', 10);
-		$order_by 	= $this->attribute('order-by', 'created_on');
-		$order_dir	= $this->attribute('order-dir', 'ASC');
+		$limit			= $this->attribute('limit', 10);
+		$order_by 		= $this->attribute('order-by', 'created_on');
+		$order_dir		= $this->attribute('order-dir', 'ASC');
+		$include_count 	= (bool) in_array(strtolower($this->attribute('include-count')), array('y', 'yes', 'true'));
+		
+		$this->db->select('vc.id, vc.title, vc.slug, vc.description, vc.thumbnail');
+		
+		if ($include_count)
+		{
+			$this->db->select('(SELECT count(id) FROM '.$this->db->dbprefix('videos').' v WHERE vc.id = v.channel_id) as video_count	', FALSE);
+		}
 
-		return $this->db
-		->order_by($order_by, $order_dir)
-			->get('video_channels')
+		$foo = $this->db
+			->order_by($order_by, $order_dir)
+			->get('video_channels vc')
 			->result_array();
+			
+		return $foo;
 	}
 }
 
