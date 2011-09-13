@@ -1,46 +1,41 @@
 <div class="video view">
 	
-	<div class="heading">
-		
-		<h2 style="display:inline-block"><?php echo $video->title; ?></h2>
-		
-		<p><?php echo $video->description ?></p>
-		
-	</div>
 	
 	<div class="body">
 		<?php echo $video->embed_code; ?>
 	</div>
 	
-	<div class="details">
+	<div id="sidebar">
 		
-		<ul>
-			<li class="date"><span class="date-label"><?php echo lang('video:date_label');?>: </span><?php echo format_date($video->created_on); ?></li>
+		<div id="video_information">
+			<div class="video_info_top"><h2><?php echo $video->title; ?></h2></div>
 			
-			<li class="channel">
-				<?php echo lang('video:channel_label');?>: <?php echo anchor('videos/channel/'.$video->channel->slug, $video->channel->title);?>
-			</li>
-		
-			<li class="views">
-				<?php echo lang('video:views_label');?>: <?php echo $video->views ?>
-			</li>
-
-			<li class="tags">
-				<?php echo lang('global:keywords');?>: 
+			<div class="video_info_content">
+				<p><?php echo $video->description ?></p>
 				
+				<p>Ep 3 of 25 in <?php echo anchor('videos/channel/'.$video->channel->slug, $video->channel->title);?><br />
+				<?php echo lang('video:views_label');?>: <?php echo $video->views ?>
+				Posted: <?php echo format_date($video->created_on); ?></p>
+				
+				Tagged: 
 				<?php if ($video->keywords): ?>
-				<ul>
-				<?php foreach ($video->keywords as $keyword): ?>
-				<li><?php echo anchor('videos/search?q='.$keyword, '#'.$keyword) ?></li>
-				<?php endforeach; ?>
-				</ul>
+					<ul class="tags">
+						<?php foreach ($video->keywords as $keyword): ?>
+						<li><?php echo anchor('videos/search?q='.$keyword, $keyword) ?></li>
+						<?php endforeach; ?>
+					</ul>
 				<?php else: ?>
-				<span class="no-tags">None</span>
+					<span class="no-tags">None</span>
 				<?php endif; ?>
-			</li>
-		</ul>
-		
-	</div>
+				
+			</div>
+			
+			<div class="video_info_bottom"></div>
+			
+		</div>
+	
+	</div><!--/#sidebar -->
+	
 
 	<?php if ( ! empty($related_videos)): ?>
 		

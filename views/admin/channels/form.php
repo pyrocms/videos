@@ -6,7 +6,7 @@
 
 <?php endif; ?>
 
-<?php echo form_open('', 'class="crud" id="channels"'); ?>
+<?php echo form_open_multipart('', 'class="crud" id="channels"'); ?>
 
 <fieldset>
 	<ul>
@@ -23,7 +23,14 @@
 		<?php if (Settings::get('video_thumb_enabled')): ?>
 		<li class="even">
 			<label for="thumbnail"><?php echo lang('video:thumbnail_label');?></label>
-			<?php echo  form_upload('thumbnail'); ?>
+			
+			<div style="float:left">
+			<?php echo form_upload('thumbnail'); ?>
+			
+			<?php if ( ! empty($channel->thumbnail)): ?>
+				<br /><img src="<?php echo base_url().UPLOAD_PATH.'videos/channel_thumbs/'.$channel->thumbnail ?>" />
+			<?php endif; ?>
+			</div>
 		</li>
 		<?php endif ?>
 	</ul>

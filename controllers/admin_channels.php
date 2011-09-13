@@ -1,4 +1,4 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  *
  * @package  	PyroCMS
@@ -78,17 +78,37 @@ class Admin_Channels extends Admin_Controller
 		// Validate the data
 		if ($this->form_validation->run())
 		{
-			$result = $this->video_channel_m->insert(array(
+			$imput = array(
 				'title' => $this->input->post('title'),
 				'description' => $this->input->post('description'),
-			));
+			);
 			
-			$result
-				? $this->session->set_flashdata('success', sprintf( lang('video_channel:add_success'), $this->input->post('title')) )
+			if ( ! empty($_FILES['thumbnail']['name']))
+			{
+				if ( ! self::_upload())
+				{
+					$this->template->messages = array('error' => $this->upload->display_errors());
+					goto display;
+				}
+
+				if ( ! self::_resize())
+				{
+					$this->template->messages = array('error' => $this->image_lib->display_errors());
+					goto display;
+				}
+				
+				$thumbnail = $this->upload->data();
+				$input['thumbnail'] = $thumbnail['file_name'];
+			}
+			
+			$this->video_channel_m->insert($input)
+				? $this->session->set_flashdata('success', sprintf(lang('video_channel:add_success'), $this->input->post('title')))
 				: $this->session->set_flashdata(array('error'=> lang('video_channel:add_error')));
 
 			redirect('admin/videos/channels');
 		}
+
+		display:
 		
 		// Loop through each validation rule
 		foreach($this->validation_rules as $rule)
@@ -118,18 +138,43 @@ class Admin_Channels extends Admin_Controller
 		
 		// Validate the results
 		if ($this->form_validation->run())
-		{		
-			$this->video_channel_m->update($id, $_POST)
+		{
+			$input = array(
+				'title' => $this->input->post('title'),
+				'description' => $this->input->post('description'),
+			);
+			
+			if ( ! empty($_FILES['thumbnail']['name']))
+			{
+				if ( ! self::_upload())
+				{
+					$this->template->messages = array('error' => $this->upload->display_errors());
+					goto display;
+				}
+
+				if ( ! self::_resize())
+				{
+					$this->template->messages = array('error' => $this->image_lib->display_errors());
+					goto display;
+				}
+				
+				$thumbnail = $this->upload->data();
+				$input['thumbnail'] = $thumbnail['file_name'];
+			}
+			
+			$this->video_channel_m->update($id, $input)
 				? $this->session->set_flashdata('success', sprintf( lang('video_channel:edit_success'), $this->input->post('title')) )
 				: $this->session->set_flashdata(array('error'=> lang('video_channel:edit_error')));
 			
 			redirect('admin/videos/channels');
 		}
 		
+		display:
+		
 		// Loop through each rule
-		foreach($this->validation_rules as $rule)
+		foreach ($this->validation_rules as $rule)
 		{
-			if($this->input->post($rule['field']) !== FALSE)
+			if ($this->input->post($rule['field']) !== FALSE)
 			{
 				$channel->{$rule['field']} = $this->input->post($rule['field']);
 			}
@@ -151,13 +196,13 @@ class Admin_Channels extends Admin_Controller
 		$id_array = (!empty($id)) ? array($id) : $this->input->post('action_to');
 		
 		// Delete multiple
-		if(!empty($id_array))
+		if ( ! empty($id_array))
 		{
 			$deleted = 0;
 			$to_delete = 0;
 			foreach ($id_array as $id) 
 			{
-				if($this->video_channel_m->delete($id))
+				if ($this->video_channel_m->delete($id))
 				{
 					$deleted++;
 				}
@@ -168,7 +213,7 @@ class Admin_Channels extends Admin_Controller
 				$to_delete++;
 			}
 			
-			if( $deleted > 0 )
+			if ( $deleted > 0 )
 			{
 				$this->session->set_flashdata('success', sprintf($this->lang->line('video_channel:mass_delete_success'), $deleted, $to_delete));
 			}
@@ -201,9 +246,9 @@ class Admin_Channels extends Admin_Controller
 		{
 			$id = $this->video_channel_m->insert($_POST);
 			
-			if($id > 0)
+			if ($id > 0)
 			{
-				$message = sprintf( lang('video_channel:add_success'), $this->input->post('title'));
+				$message = sprintf(lang('video_channel:add_success'), $this->input->post('title'));
 			}
 			else
 			{
@@ -232,5 +277,36 @@ class Admin_Channels extends Admin_Controller
 
 			echo $form;
 		}
+	}
+	
+	private function _upload()
+	{
+		$upload_path = UPLOAD_PATH.'videos/channel_thumbs/';
+		is_dir($upload_path) or mkdir($upload_path, 0777, true);
+
+		$config['upload_path'] = $upload_path;
+		$config['allowed_types'] = 'gif|jpg|jpeg|png';
+		$config['encrypt_name']	= true;
+		$config['max_width']  = '1200';
+		$config['max_height']  = '800';
+
+		$this->load->library('upload', $config);
+		
+		return $this->upload->do_upload('thumbnail');
+	}
+
+	private function _resize()
+	{
+		$thumbnail = $this->upload->data();
+
+		list($width, $height)=explode('x', Settings::get('video_thumb_size'));
+
+		$config['source_image']	= $thumbnail['full_path'];
+		$config['maintain_ratio'] = TRUE;
+		$config['width']	 = $width;
+		$config['height']	= $height;
+
+		$this->load->library('image_lib', $config); 
+		return $this->image_lib->resize();
 	}
 }

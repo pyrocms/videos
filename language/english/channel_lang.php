@@ -14,9 +14,9 @@ $lang['video_channel:list_title']             = 'List channels';
 
 // messages
 $lang['video_channel:no_channels']          = 'There are no channels.';
-$lang['video_channel:add_success']            = 'Your channel has been saved.';
+$lang['video_channel:add_success']            = 'Your channel "%s" has been saved.';
 $lang['video_channel:add_error']              = 'An error occurred.';
-$lang['video_channel:edit_success']           = 'The channel was saved.';
+$lang['video_channel:edit_success']           = 'The channel "%s" was saved.';
 $lang['video_channel:edit_error']             = 'An error occurred.';
 $lang['video_channel:mass_delete_error']      = 'Error occurred while trying to delete channel "%s".';
 $lang['video_channel:mass_delete_success']    = '%s channels out of %s successfully deleted.';

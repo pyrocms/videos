@@ -13,8 +13,9 @@
 					</div>
 				
 					<?php else: ?>
-					<div class="thumbnail missing" style="width: <?php echo $thumb_width ?>px; height: <?php echo $thumb_height ?>px">
-					</div>
+					<!-- No thumbnail -->
+					<!--<div class="thumbnail missing" style="width: <?php echo $thumb_width ?>px; height: <?php echo $thumb_height ?>px">
+					</div>-->
 					<?php endif; ?>
 				<?php endif; ?>
 

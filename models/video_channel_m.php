@@ -17,13 +17,12 @@ class Video_channel_m extends MY_Model
 	 */
 	public function insert($input = array())
 	{
-		parent::insert(array(
-			'title'=>$input['title'],
-			'slug'=>url_title(strtolower(convert_accented_characters($input['title']))),
+		return parent::insert(array(
+			'title' => $input['title'],
+			'slug' => url_title(strtolower(convert_accented_characters($input['title']))),
 			'description' => $input['description'],
+			'thumbnail' => $input['thumbnail'],
 		));
-		
-		return $input['title'];
 	}
     
 	/**
@@ -35,11 +34,8 @@ class Video_channel_m extends MY_Model
 	 */
 	public function update($id, $input)
 	{
-		return parent::update($id, array(
-			'title'	=> $input['title'],
-		    'slug'	=> url_title(strtolower(convert_accented_characters($input['title']))),
-			'description' => $input['description'],
-		));
+		$input['slug'] = url_title(strtolower(convert_accented_characters($input['title'])));
+		return parent::update($id, $input);
 	}
 
 	/**
