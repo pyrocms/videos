@@ -77,13 +77,50 @@ class Video_m extends MY_Model {
 	public function insert($input)
 	{
 		$input['created_on'] = now();
+		
+		if ( ! empty($input['channel_id']))
+		{
+			$last_video = $this->db
+				->select('episode')
+				->order_by('episode', 'desc')
+				->limit(1)
+				->where('episode >', 0)
+				->where('channel_id', $input['channel_id'])
+				->get('videos')
+				->row();
+			
+			$input['episode'] = $last_video ? $last_video->episode + 1 : 1;
+		}
+		
 		return parent::insert($input);
 	}
 
 	public function update($id, $input)
 	{
 		$input['updated_on'] = now();
-		return parent::update($id, $input);
+		
+		$result = parent::update($id, $input);
+		
+		if ( ! empty($input['channel_id']))
+		{
+			$videos = $this->db
+				->select('id')
+				->where('channel_id', $input['channel_id'])
+				->order_by('created_on')
+				->get('videos')
+				->result();
+		
+			$i = 0;
+			foreach ($videos as $video)
+			{
+				$this->db
+					->set('episode', ++$i)
+					->where('id', $video->id)
+					->update('videos');
+			}
+		}
+		
+		return $result;
 	}
 	
 	public function update_views($id)

@@ -119,6 +119,9 @@ class Videos extends Public_Controller
 		// Convert keywords into something useful
 		$video->keywords = Keywords::get($video->keywords);
 		
+		// Find out how many videos are in this channel
+		$channel->video_count = $this->video_channel_m->count_videos($channel->id);
+		
 		// They want it a difference size? Lets resize it!
 		if (Settings::get('video_display_width') != $video->width)
 		{
@@ -131,9 +134,13 @@ class Videos extends Public_Controller
 			$video->embed_code = str_replace(array(
 				'width="'.$video->width.'"',
 				'height="'.$video->height.'"',
+				'width:'.$video->width.'px',
+				'height:'.$video->height.'px',
 			), array(
 				'width="'.$new_width.'"',
 				'height="'.$new_height.'"',
+				'width:'.$new_width.'px',
+				'height:"'.$new_height.'px',
 			), $video->embed_code);
 		}
 

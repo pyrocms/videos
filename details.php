@@ -2,7 +2,7 @@
 
 class Module_Videos extends Module {
 
-	public $version = '1.2.1';
+	public $version = '1.3.0';
 
 	public function info()
 	{
@@ -116,6 +116,18 @@ VALUES (
 						'type' => 'char',
 						'constraint' => 32,
 						'null' => false,
+					),
+				));
+				
+			case '1.2.0':
+			case '1.2.1':
+			
+				$this->dbforge->add_column('videos', array(
+					'episode' => array(
+						'type' => 'int',
+						'constraint' => 5,
+						'null' => false,
+						'default' => 1,
 					),
 				));
 			

@@ -20,7 +20,7 @@
 				<?php endif; ?>
 
 				<h3><?php echo anchor('videos/view/'. $video->slug, $video->title); ?></h3>
-				<div class="date"><?php echo lang('video:date_label');?>: <?php echo format_date($video->created_on); ?></div>
+				<!--<div class="date"><?php echo lang('video:date_label');?>: <?php echo format_date($video->created_on); ?></div>-->
 				<?php if ($video->channel_slug): ?>
 				<div class="channel">
 					<?php echo lang('video:channel_label');?>: <?php echo anchor('videos/channel/'.$video->channel_slug, $video->channel_title);?>

@@ -25,6 +25,13 @@ class Video_channel_m extends MY_Model
 		));
 	}
     
+	public function count_videos($id)
+	{
+		return $this->db
+			->where('channel_id', $id)
+			->count_all_results('videos');
+	}
+
 	/**
 	 * Update an existing channel
 	 * @access public

@@ -14,8 +14,8 @@
 				<p><?php echo $video->description ?></p>
 				
 				<p>Ep 3 of 25 in <?php echo anchor('videos/channel/'.$video->channel->slug, $video->channel->title);?><br />
-				<?php echo lang('video:views_label');?>: <?php echo $video->views ?>
-				Posted: <?php echo format_date($video->created_on); ?></p>
+				<!--<?php echo lang('video:views_label');?>: <?php echo $video->views ?>-->
+				Posted: <?php echo format_date($video->created_on, 'jS \of F Y'); ?></p>
 				
 				Tagged: 
 				<?php if ($video->keywords): ?>
@@ -58,10 +58,6 @@
 						<a href="<?php echo site_url('videos/view/'. $related_video->slug) ?>">
 							<img src="<?php echo base_url().UPLOAD_PATH ?>videos/thumbs/<?php echo $related_video->thumbnail ?>" width="<?php echo $thumb_width ?>" />
 						</a>
-					</div>
-			
-					<?php else: ?>
-					<div class="thumbnail missing" style="width: <?php echo $thumb_width ?>px;">
 					</div>
 					<?php endif; ?>
 				
