@@ -18,7 +18,7 @@ class Video_m extends MY_Model {
 		 return $this->db->query('
 			SELECT 
 				v.*, vc.title AS channel_title, vc.slug AS channel_slug,
-				MATCH (v.title, intro, tags, v.description) AGAINST (?) as relevance
+				MATCH (v.title, intro, v.description) AGAINST (?) as relevance
 			FROM '.$this->db->dbprefix('videos').' v
 			JOIN '.$this->db->dbprefix('video_channels').' vc ON channel_id = vc.id
 			WHERE schedule_on <= '.now().'

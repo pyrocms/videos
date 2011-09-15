@@ -82,11 +82,7 @@
 				<?php echo form_dropdown('schedule_on_minute', $minutes, date('i', $video->schedule_on)) ?>
 				
 			</li>
-			<li class="<?php echo alternator('even', ''); ?>">
-				<label for="restricted_to[]"><?php echo lang('video:access_label');?></label>
-				<?php echo form_multiselect('restricted_to[]', array(0 => lang('select.any')) + $group_options, $video->restricted_to, 'size="'.(($count = count($group_options)) > 1 ? $count : 2).'"'); ?>
-			</li>
-			<li class="<?php echo alternator('even', ''); ?>">
+			<li class="even">
 				<label for="restricted_to[]"><?php echo lang('video:access_label');?></label>
 				<?php echo form_multiselect('restricted_to[]', array(0 => lang('select.any')) + $group_options, $video->restricted_to, 'size="'.(($count = count($group_options)) > 1 ? $count : 2).'"'); ?>
 			</li>
