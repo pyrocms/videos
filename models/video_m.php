@@ -4,10 +4,10 @@ class Video_m extends MY_Model {
 
 	public function get_all()
 	{
-		$this->db->select('videos.*, video_channels.title AS channel_title, video_channels.slug AS channel_slug');
-		$this->db->join('video_channels', 'videos.channel_id = video_channels.id', 'left');
-
-		$this->db->order_by('schedule_on', 'DESC');
+		$this->db
+			->select('videos.*, video_channels.title AS channel_title, video_channels.slug AS channel_slug')
+			->join('video_channels', 'videos.channel_id = video_channels.id', 'left')
+			->order_by('schedule_on', 'DESC');
 
 		return $this->db->get('videos')->result();
 	}
@@ -25,6 +25,19 @@ class Video_m extends MY_Model {
 			HAVING relevance > 0
 			ORDER BY relevance DESC
 		', array($query))->result();
+	}
+	
+	public function get_tag($tag)
+	{
+		return $this->db
+			->select('videos.*, video_channels.title AS channel_title, video_channels.slug AS channel_slug')
+			->distinct()
+			->where('keywords.name', strtolower(trim($tag)))
+			->join('video_channels', 'videos.channel_id = video_channels.id', 'left')
+			->join('keywords_applied', 'hash = keywords')
+			->join('keywords', 'keyword_id = keywords.id')
+			->get('videos')
+			->result();
 	}
 	
 	public function get_related($video, $limit = null)

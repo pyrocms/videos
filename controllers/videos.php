@@ -49,6 +49,23 @@ class Videos extends Public_Controller
 		$this->template
 			->title($this->module_details['name'], 'Search', $query)
 			->set_breadcrumb(lang('video:video_title'))
+			->set_breadcrumb('Search', 'videos/search')
+			->set_breadcrumb('"'.htmlentities($query).'"')
+			->build('index', array(
+				'videos' => $videos,
+				'pagination' => $pagination,
+			));
+	}
+	
+	// video/tags/foo
+	public function tags($tag)
+	{
+		$pagination = create_pagination('videos/tags/'.$tag, count($this->video_m->get_tag($tag)), NULL, 4);
+		$videos = $this->video_m->limit($pagination['limit'])->get_tag($tag);
+
+		$this->template
+			->title($this->module_details['name'], 'Tags', $tag)
+			->set_breadcrumb(lang('video:video_title'))
 			->set_breadcrumb('Search')
 			->build('index', array(
 				'videos' => $videos,

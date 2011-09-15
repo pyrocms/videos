@@ -21,7 +21,7 @@
 				<?php if ($video->keywords): ?>
 					<ul class="tags">
 						<?php foreach ($video->keywords as $keyword): ?>
-						<li><?php echo anchor('videos/search?q='.$keyword, $keyword) ?></li>
+						<li><?php echo anchor('videos/tags/'.$keyword, $keyword) ?></li>
 						<?php endforeach; ?>
 					</ul>
 				<?php else: ?>
