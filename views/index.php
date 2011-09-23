@@ -6,17 +6,10 @@
 			<!-- Post heading -->
 			<div class="heading">
 	
-				<?php if (Settings::get('video_thumb_enabled')): ?>
-					<?php if ($video->thumbnail): ?>
+				<?php if (Settings::get('video_thumb_enabled') && $video->thumbnail): ?>
 					<div class="thumbnail">
-						<img src="<?php echo base_url(UPLOAD_PATH.'videos/thumbs/'.$video->thumbnail) ?>" width="<?php echo $thumb_width ?>" />
+						<img src="<?php echo base_url().UPLOAD_PATH.'videos/thumbs/'.$video->thumbnail ?>" width="<?php echo $thumb_width ?>" />
 					</div>
-				
-					<?php else: ?>
-					<!-- No thumbnail -->
-					<!--<div class="thumbnail missing" style="width: <?php echo $thumb_width ?>px; height: <?php echo $thumb_height ?>px">
-					</div>-->
-					<?php endif; ?>
 				<?php endif; ?>
 
 				<h3><?php echo anchor('videos/view/'. $video->slug, $video->title); ?></h3>

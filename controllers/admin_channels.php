@@ -78,7 +78,7 @@ class Admin_Channels extends Admin_Controller
 		// Validate the data
 		if ($this->form_validation->run())
 		{
-			$imput = array(
+			$input = array(
 				'title' => $this->input->post('title'),
 				'description' => $this->input->post('description'),
 			);
