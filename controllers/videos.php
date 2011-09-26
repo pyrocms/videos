@@ -20,9 +20,14 @@ class Videos extends Public_Controller
 		list($this->template->thumb_width, $this->template->thumb_height)=explode('x', Settings::get('video_thumb_size'));
 
 	}
+	
+	public function index()
+	{
+		$this->page();
+	}
 
 	// video/page/x also routes here
-	public function index()
+	public function page()
 	{
 		$where = array('schedule_on <=' => now());
 

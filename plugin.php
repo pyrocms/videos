@@ -130,7 +130,7 @@ class Plugin_Videos extends Plugin
 	 */
 	public function channels()
 	{
-		$limit			= $this->attribute('limit', 10);
+		$limit			= $this->attribute('limit');
 		$order_by 		= $this->attribute('order-by', 'created_on');
 		$order_dir		= $this->attribute('order-dir', 'ASC');
 		$include_count 	= (bool) in_array(strtolower($this->attribute('include-count')), array('y', 'yes', 'true'));
@@ -141,13 +141,13 @@ class Plugin_Videos extends Plugin
 		{
 			$this->db->select('(SELECT count(id) FROM '.$this->db->dbprefix('videos').' v WHERE vc.id = v.channel_id) as video_count	', FALSE);
 		}
+		
+		$limit && $this->db->limit($limit);
 
-		$foo = $this->db
+		return $this->db
 			->order_by($order_by, $order_dir)
 			->get('video_channels vc')
 			->result_array();
-			
-		return $foo;
 	}
 }
 
