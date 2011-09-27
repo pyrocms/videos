@@ -5,14 +5,25 @@ class Video_m extends MY_Model {
 	public function get_all()
 	{
 		$this->db
-			->select('videos.*, video_channels.title AS channel_title, video_channels.slug AS channel_slug')
+			->select('videos.*, video_channels.title AS channel_title, video_channels.slug AS channel_slug, video_channels.parent_id AS channel_parent_id')
 			->join('video_channels', 'videos.channel_id = video_channels.id', 'left')
 			->order_by('schedule_on', 'DESC');
 
 		return $this->db->get('videos')->result();
 	}
 	
+	
+	public function get_grouped_by_channel()
+	{
+		$this->db
+			->select('videos.*, video_channels.title AS channel_title, video_channels.slug AS channel_slug, video_channels.parent_id AS channel_parent_id')
+			->join('video_channels', 'videos.channel_id = video_channels.id', 'left')
+			->order_by('channel_title, schedule_on');
 
+		return $this->db->get('videos')->result();
+	}
+	
+	
 	public function get_search($query)
 	{
 		 return $this->db->query('

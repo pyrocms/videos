@@ -12,16 +12,20 @@
 	<ul>
 		<li class="even">
 			<label for="title"><?php echo lang('video_channel:title_label');?></label>
-			<?php echo  form_input('title', $channel->title); ?>
+			<?php echo form_input('title', $channel->title); ?>
 			<span class="required-icon tooltip"><?php echo lang('required_label');?></span>
 		</li>
 		<li>
 			<label for="description"><?php echo lang('global:description');?></label>
-			<?php echo  form_textarea('description', $channel->description); ?>
+			<?php echo form_textarea('description', $channel->description); ?>
 			<span class="required-icon tooltip"><?php echo lang('required_label');?></span>
 		</li>
-		<?php if (Settings::get('video_thumb_enabled')): ?>
 		<li class="even">
+			<label for="parent_id">Parent</label>
+			<?php echo form_dropdown('parent_id', $channels, $channel->parent_id); ?>
+		</li>
+		<?php if (Settings::get('video_thumb_enabled')): ?>
+		<li>
 			<label for="thumbnail"><?php echo lang('video:thumbnail_label');?></label>
 			
 			<div style="float:left">

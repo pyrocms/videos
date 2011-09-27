@@ -20,7 +20,7 @@
 			</tr>
 		</tfoot>
 		<tbody>
-			<?php foreach ($channels as $channel): ?>
+			<?php foreach ($channels[0] as $channel): ?>
 			<tr>
 				<td><?php echo form_checkbox('action_to[]', $channel->id); ?></td>
 				<td><?php echo $channel->title; ?></td>
@@ -29,6 +29,22 @@
 					<?php echo anchor('admin/videos/channels/delete/' . $channel->id, lang('global:delete'), 'class="confirm button delete"') ;?>
 				</td>
 			</tr>
+			
+			<?php if ( ! empty($channels[$channel->id])): ?>
+				
+				<?php foreach ($channels[$channel->id] as $channel): ?>
+				<tr>
+					<td><?php echo form_checkbox('action_to[]', $channel->id); ?></td>
+					<td><?php echo '-- '.$channel->title; ?></td>
+					<td class="align-center buttons buttons-small">
+						<?php echo anchor('admin/videos/channels/edit/' . $channel->id, lang('global:edit'), 'class="button edit"'); ?>
+						<?php echo anchor('admin/videos/channels/delete/' . $channel->id, lang('global:delete'), 'class="confirm button delete"') ;?>
+					</td>
+				</tr>
+				<?php endforeach; ?>
+				
+			<?php endif; ?>
+			
 			<?php endforeach; ?>
 		</tbody>
 	</table>

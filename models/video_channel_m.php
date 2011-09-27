@@ -21,7 +21,8 @@ class Video_channel_m extends MY_Model
 			'title' => $input['title'],
 			'slug' => url_title(strtolower(convert_accented_characters($input['title']))),
 			'description' => $input['description'],
-			'thumbnail' => $input['thumbnail'],
+			'parent_id' => $input['parent_id'],
+			'thumbnail' => isset($input['thumbnail']) ? $input['thumbnail'] : NULL,
 		));
 	}
     

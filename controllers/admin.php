@@ -91,16 +91,18 @@ class Admin extends Admin_Controller {
 		$this->lang->load('video');
 		$this->lang->load('channel');
 
-		$this->data->channels = array();
-		if ($channels = $this->video_channel_m->order_by('title')->get_all())
+		$channels = array();
+		if ($result = $this->video_channel_m->order_by('title')->get_all())
 		{
-			foreach ($channels as $channel)
+			foreach ($result as $channel)
 			{
-				$this->data->channels[$channel->id] = $channel->title;
+				$channels[$channel->parent_id][] = $channel;
 			}
 		}
 
-		$this->template->set_partial('shortcuts', 'admin/partials/shortcuts');
+		$this->template
+			->set('channels', $channels)
+			->set_partial('shortcuts', 'admin/partials/shortcuts');
 	}
 
 	/**
@@ -113,7 +115,7 @@ class Admin extends Admin_Controller {
 		$base_where = array();//array('status' => 'all');
 		
 		//add post values to base_where if f_module is posted
-		$this->input->post('f_channel') and $base_where += array('channel' => $this->input->post('f_channel'));
+		$this->input->post('f_channel') and $base_where += array('channel_id' => $this->input->post('f_channel'));
 
 		//$base_where['status'] = $this->input->post('f_status') ? $this->input->post('f_status') : $base_where['status'];
 

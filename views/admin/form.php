@@ -42,7 +42,22 @@
 			<? endif; ?>
 			<li class="even">
 				<label for="channel_id"><?php echo lang('video:channel_label'); ?></label>
-				<?php echo form_dropdown('channel_id', array(lang('video:no_channel_select_label')) + $channels, $video->channel_id) ?>
+				
+				<select name="channel_id">
+					
+					<option value=""><?php echo lang('select.none') ?></option>
+					
+					<?php foreach ($channels[0] as $channel): ?>
+						<option value="<?php echo $channel->id ?>" <?php echo set_select('channel_id', $video->channel_id) ?>><?php echo $channel->title; ?></option>
+
+						<?php if ( ! empty($channels[$channel->id])): ?>
+							<?php foreach ($channels[$channel->id] as $channel): ?>
+							<option value="<?php echo $channel->id ?>" <?php echo set_select('channel_id', $video->channel_id) ?>><?php echo '-- '.$channel->title; ?></option>
+							<?php endforeach; ?>
+						<?php endif ?>
+					<?php endforeach; ?>
+					</select>
+				
 					[ <?php echo anchor('admin/videos/channels/create', lang('video:new_channel_label'), 'target="_blank"'); ?> ]
 			</li>
 			<li>

@@ -8,7 +8,22 @@
         </li>
 	<li>
             <?php echo lang('video:channel_label', 'f_category'); ?>
-            <?php echo form_dropdown('f_channel', array(0 =>lang('select.all')) + $channels); ?>
+
+			<select name="f_channel">
+				
+				<option value=""><?php echo lang('select.all') ?></option>
+				
+				<?php foreach ($channels[0] as $channel): ?>
+					<option value="<?php echo $channel->id ?>" <?php echo set_select('f_channel') ?>><?php echo $channel->title; ?></option>
+
+					<?php if ( ! empty($channels[$channel->id])): ?>
+						<?php foreach ($channels[$channel->id] as $channel): ?>
+						<option value="<?php echo $channel->id ?>" <?php echo set_select('f_channel') ?>><?php echo '-- '.$channel->title; ?></option>
+						<?php endforeach; ?>
+					<?php endif ?>
+				<?php endforeach; ?>
+				</select>
+				
         </li>
 	<li><?php echo form_input('f_keywords'); ?></li>
 	<li><?php echo anchor(current_url() . '#', lang('buttons.cancel'), 'class="cancel"'); ?></li>

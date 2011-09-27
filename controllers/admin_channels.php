@@ -24,6 +24,11 @@ class Admin_Channels extends Admin_Controller
 			'label' => 'lang:video:description_label',
 			'rules' => 'trim|required'
 		),
+		array(
+			'field' => 'parent_id',
+			'label' => 'Parent',
+			'rules' => 'trim|numeric'
+		),
 	);
 	
 	/** 
@@ -53,14 +58,19 @@ class Admin_Channels extends Admin_Controller
 	 */
 	public function index()
 	{
-		$this->pyrocache->delete_all('modules_m');
 		// Create pagination links
 		$total_rows = $this->video_channel_m->count_all();
 		$pagination = create_pagination('admin/video/channels/index', $total_rows);
 			
 		// Using this data, get the relevant results
-		$channels = $this->video_channel_m->order_by('title')->limit($pagination['limit'])->get_all();
+		$result = $this->video_channel_m->limit($pagination['limit'])->get_all();
 
+		$channels = array();
+		foreach ($result as $channel)
+		{
+			$channels[$channel->parent_id][] = $channel;
+		}
+			
 		$this->template
 			->title($this->module_details['name'], lang('video_channel:list_title'))
 			->set('channels', $channels)
@@ -81,6 +91,7 @@ class Admin_Channels extends Admin_Controller
 			$input = array(
 				'title' => $this->input->post('title'),
 				'description' => $this->input->post('description'),
+				'parent_id' => $this->input->post('parent_id'),
 			);
 			
 			if ( ! empty($_FILES['thumbnail']['name']))
@@ -114,11 +125,14 @@ class Admin_Channels extends Admin_Controller
 		foreach($this->validation_rules as $rule)
 		{
 			$channel->{$rule['field']} = set_value($rule['field']);
-		}
+		}	
+			
+		$channels = array(lang('select.none')) + $this->video_channel_m->order_by('title')->where('parent_id', 0)->dropdown('id', 'title');
 			
 		$this->template
 			->title($this->module_details['name'], lang('video_channel:create_title'))
 			->set('channel', $channel)
+			->set('channels', $channels)
 			->build('admin/channels/form', $this->data);	
 	}
 	
@@ -142,6 +156,7 @@ class Admin_Channels extends Admin_Controller
 			$input = array(
 				'title' => $this->input->post('title'),
 				'description' => $this->input->post('description'),
+				'parent_id' => $this->input->post('parent_id'),
 			);
 			
 			if ( ! empty($_FILES['thumbnail']['name']))
@@ -179,9 +194,12 @@ class Admin_Channels extends Admin_Controller
 				$channel->{$rule['field']} = $this->input->post($rule['field']);
 			}
 		}
+		
+		$channels = array(lang('select.none')) + $this->video_channel_m->order_by('title')->where('parent_id', 0)->dropdown('id', 'title');
 
 		$this->template->title($this->module_details['name'], sprintf(lang('video_channel:edit_title'), $channel->title))
 			->set('channel', $channel)
+			->set('channels', $channels)
 			->build('admin/channels/form', $this->data);
 	}	
 

@@ -32,7 +32,7 @@ class Videos extends Public_Controller
 		$where = array('schedule_on <=' => now());
 
 		$pagination = create_pagination('videos/page', $this->video_m->where($where)->count_by(), NULL, 3);
-		$videos = $this->video_m->limit($pagination['limit'])->where($where)->get_all();
+		$videos = $this->video_m->limit($pagination['limit'])->where($where)->get_grouped_by_channel();
 
 		$this->template
 			->title($this->module_details['name'])
@@ -56,7 +56,7 @@ class Videos extends Public_Controller
 			->set_breadcrumb(lang('video:video_title'))
 			->set_breadcrumb('Search', 'videos/search')
 			->set_breadcrumb('"'.htmlentities($query).'"')
-			->build('index', array(
+			->build('list', array(
 				'videos' => $videos,
 				'pagination' => $pagination,
 			));
@@ -72,7 +72,7 @@ class Videos extends Public_Controller
 			->title($this->module_details['name'], 'Tags', $tag)
 			->set_breadcrumb(lang('video:video_title'))
 			->set_breadcrumb('Search')
-			->build('index', array(
+			->build('list', array(
 				'videos' => $videos,
 				'pagination' => $pagination,
 			));
@@ -132,9 +132,14 @@ class Videos extends Public_Controller
 			$video->restricted_to = json_decode(',', $video->restricted_to);
 
 			// Are they logged in and an admin or a member of the correct group?
-			if ( ! $this->user OR (isset($this->user->group) AND $this->user->group != 'admin' AND ! in_array($this->user->group_id, $video->restricted_to)))
+			if ( ! $this->current_user)
 			{
 				redirect('users/login/videos/view/'.$video->slug);
+			}
+			
+			elseif (isset($this->current_user->group) AND $this->current_user->group != 'admin' AND ! in_array($this->current_user->group_id, $video->restricted_to))
+			{
+				show_error('You do not have permission to view this video.');
 			}
 		}
 		
