@@ -48,11 +48,11 @@
 					<option value=""><?php echo lang('select.none') ?></option>
 					
 					<?php foreach ($channels[0] as $channel): ?>
-						<option value="<?php echo $channel->id ?>" <?php echo set_select('channel_id', $video->channel_id) ?>><?php echo $channel->title; ?></option>
+						<option value="<?php echo $channel->id ?>" <?php echo $video->channel_id == $channel->id ? 'selected="selected"' : '' ?>><?php echo $channel->title; ?></option>
 
 						<?php if ( ! empty($channels[$channel->id])): ?>
 							<?php foreach ($channels[$channel->id] as $channel): ?>
-							<option value="<?php echo $channel->id ?>" <?php echo set_select('channel_id', $video->channel_id) ?>><?php echo '-- '.$channel->title; ?></option>
+							<option value="<?php echo $channel->id ?>" <?php echo $video->channel_id == $channel->id ? 'selected="selected"' : '' ?>><?php echo '-- '.$channel->title; ?></option>
 							<?php endforeach; ?>
 						<?php endif ?>
 					<?php endforeach; ?>

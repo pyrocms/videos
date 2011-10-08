@@ -12,13 +12,11 @@ class Videos extends Public_Controller
 		parent::__construct();
 		
 		$this->load->library('keywords/keywords');
-		$this->load->model(array('video_m', 'video_channel_m'));
-		$this->load->model('comments/comments_m');
+		$this->load->model(array('video_m', 'video_channel_m', 'comments/comments_m'));
 		$this->load->helper('text');
 		$this->lang->load('video');
 
 		list($this->template->thumb_width, $this->template->thumb_height)=explode('x', Settings::get('video_thumb_size'));
-
 	}
 	
 	public function index()
@@ -32,13 +30,33 @@ class Videos extends Public_Controller
 		$where = array('schedule_on <=' => now());
 
 		$pagination = create_pagination('videos/page', $this->video_m->where($where)->count_by(), NULL, 3);
-		$videos = $this->video_m->limit($pagination['limit'])->where($where)->get_grouped_by_channel();
-
+		$result = $this->video_m->limit($pagination['limit'])->where($where)->get_all();
+		
+		// Slice shit up so it can go in the right channel (or sub channel)
+		$videos = array();
+		foreach ($result as $video)
+		{
+			// Give a bool from the JSON logic if the current user can see this video
+			$video->restricted = ( ! $this->current_user and ($restrict = json_decode($video->restricted_to)) and ! empty($restrict[0]));
+			
+			$videos[$video->channel_id][] = $video;
+		}
+		unset($result);
+		
+		$result = $this->video_channel_m->get_all();
+		$channels = array();
+		foreach ($result as $channel)
+		{
+			$channels[$channel->parent_id][$channel->id] = $channel;
+		}
+		unset($result);
+		
 		$this->template
 			->title($this->module_details['name'])
 			->set_breadcrumb( lang('video:video_title'))
 			->build('index', array(
 				'videos' => $videos,
+				'channels' => $channels,
 				'pagination' => $pagination,
 			));
 	}
@@ -78,35 +96,72 @@ class Videos extends Public_Controller
 			));
 	}
 
-	public function channel($slug = '')
+	public function channel($channel_slug = null)
 	{
-		$slug OR redirect('videos');
+		$channel_slug OR redirect('videos');
 
-		// Get channel data
-		$channel = $this->video_channel_m->get_by('slug', $slug) OR show_404();
+		$channel = $this->video_channel_m->get_by(array('slug' => $channel_slug)) OR show_404();
 
 		// Count total video videos and work out how many pages exist
-		$pagination = create_pagination('video/channel/'.$slug, $this->video_m->count_by(array(
-			'channel' => $slug,
+		$pagination = create_pagination('video/channel/'.$channel_slug, $this->video_m->count_by(array(
+			'channel' => $channel_slug,
 			'schedule_on <=' => now(),
 		)), NULL, 4);
 
 		// Get the current page of video videos
 		$videos = $this->video_m->limit($pagination['limit'])->get_many_by(array(
-			'video_channels.slug'=> $slug,
+			'video_channels.id'=> $channel->id,
+			'schedule_on <=' => now(),
+		));
+		
+		// Find sub channels of this module
+		$sub_channels = $this->video_channel_m->get_many_by('parent_id', $channel->id);
+
+		// Build the page
+		$this->template->title($this->module_details['name'], $channel->title )
+			->set_metadata('description', $channel->description)
+			->set_metadata('keywords', str_replace(' ', ', ', $channel->title))
+			->set_breadcrumb( lang('video:videos_title'), 'videos')
+			->set_breadcrumb( $channel->title )
+			->set('videos', $videos)
+			->set('channel', $channel)
+			->set('sub_channels', $sub_channels)
+			->set('pagination', $pagination)
+			->build('channel');
+	}
+	
+	public function subchannel($channel_slug = null, $sub_channel_slug = null)
+	{
+		$channel_slug OR redirect('videos');
+
+		$parent = $this->video_channel_m->get_by('slug', $channel_slug) OR show_404();
+		$channel = $this->video_channel_m->get_by('slug', $sub_channel_slug) OR show_404();
+
+		// Count total video videos and work out how many pages exist
+		$pagination = create_pagination('video/channel/'.$channel->slug.'/'.$sub_channel_slug, $this->video_m->count_by(array(
+			'channel' => $channel->slug,
+			'schedule_on <=' => now(),
+		)), NULL, 5);
+		
+		$this->template->set('parent', $parent);
+
+		// Get the current page of video videos
+		$videos = $this->video_m->limit($pagination['limit'])->get_many_by(array(
+			'video_channels.id'=> $channel->id,
 			'schedule_on <=' => now(),
 		));
 
 		// Build the page
 		$this->template->title($this->module_details['name'], $channel->title )
 			->set_metadata('description', $channel->description)
-			->set_metadata('keywords', $channel->title )
+			->set_metadata('keywords', str_replace(' ', ', ', $channel->title))
 			->set_breadcrumb( lang('video:videos_title'), 'videos')
 			->set_breadcrumb( $channel->title )
 			->set('videos', $videos)
 			->set('channel', $channel)
+			->set('parent', $parent)
 			->set('pagination', $pagination)
-			->build('channel', $this->data );
+			->build('subchannel');
 	}
 	
 	// Public: View an video
@@ -129,7 +184,7 @@ class Videos extends Public_Controller
 
 		if (json_decode($video->restricted_to))
 		{
-			$video->restricted_to = json_decode(',', $video->restricted_to);
+			$video->restricted_to = json_decode($video->restricted_to);
 
 			// Are they logged in and an admin or a member of the correct group?
 			if ( ! $this->current_user)

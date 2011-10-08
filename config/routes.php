@@ -20,7 +20,14 @@
 |	http://www.codeigniter.com/user_guide/general/routing.html
 */
 
-// public
-$route['videos/rss/(:any).rss']		= 'rss/category/$2';
+// TODO
+// $route['videos/rss/(:any).rss']		= 'rss/category/$1';
+
+$route['videos/channel/(:any)/(:any)']		= 'videos/subchannel/$1/$2';
+$route['videos/channel/(:any)/(:any)/(:num)'] = 'videos/subchannel/$1/$2/$3';
+
+$route['videos/channel/(:any)']				= 'videos/channel/$1';
+$route['videos/channel/(:any)/(:num)']		= 'videos/channel/$1/$2';
+
 // admin
 $route['videos/admin/channels(/:any)?']		= 'admin_channels$1';

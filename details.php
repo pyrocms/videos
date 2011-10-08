@@ -144,13 +144,13 @@ VALUES (
 			
 			case '1.3.1':
 			
-				$this->db->query('ALTER TABLE '.$this->db->query('video_channels').' 
+				$this->db->query('ALTER TABLE '.$this->db->dbprefix('video_channels').' 
 				DROP INDEX `slug - unique` ,
 				ADD UNIQUE `slug - unique` ( `slug` , `parent_id` ),
 				DROP INDEX `title - unique` ,
-				ADD UNIQUE `title - unique` ( `title` , `parent_id` );');
+				ADD UNIQUE `title - unique` ( `title` , `parent_id` )');
 				
-				$this->db->query('ALTER TABLE '.$this->db->query('video_channels').'
+				$this->db->query('ALTER TABLE '.$this->db->dbprefix('video_channels').'
 				CHANGE `title` `title` VARCHAR( 100 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				CHANGE `slug` `slug` VARCHAR( 100 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL');
 

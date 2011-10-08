@@ -135,18 +135,22 @@ class Plugin_Videos extends Plugin
 		$order_dir		= $this->attribute('order-dir', 'ASC');
 		$include_count 	= (bool) in_array(strtolower($this->attribute('include-count')), array('y', 'yes', 'true'));
 		
-		$this->db->select('vc.id, vc.title, vc.slug, vc.description, vc.thumbnail');
+		$this->db
+			->select('video_channels.id, video_channels.title, video_channels.slug, video_channels.description, video_channels.thumbnail')
+			->select('pvc.id as parent_id, pvc.title as parent_title, pvc.slug as parent_slug');
 		
 		if ($include_count)
 		{
-			$this->db->select('(SELECT count(id) FROM '.$this->db->dbprefix('videos').' v WHERE vc.id = v.channel_id) as video_count	', FALSE);
+			$this->db->select('(SELECT count(id) FROM '.$this->db->dbprefix('videos').' v WHERE '.$this->db->dbprefix('video_channels').'.id = v.channel_id) as video_count	', FALSE);
+			$this->db->having('video_count > 0');
 		}
 		
 		$limit && $this->db->limit($limit);
 
 		return $this->db
 			->order_by($order_by, $order_dir)
-			->get('video_channels vc')
+			->join('video_channels pvc', 'pvc.id = video_channels.parent_id', 'left')
+			->get('video_channels')
 			->result_array();
 	}
 }

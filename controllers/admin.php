@@ -160,7 +160,13 @@ class Admin extends Admin_Controller {
 		}
 		
 		if ($this->form_validation->run())
-		{	
+		{
+			$restricted = array();
+			foreach ($this->input->post('restricted_to') as $group_id)
+			{
+				$group_id > 0 and $restricted[] = $group_id;
+			}
+			
 			$input = array(
 				'title'				=> $this->input->post('title'),
 				'slug'				=> $this->input->post('slug'),
@@ -174,7 +180,7 @@ class Admin extends Admin_Controller {
 				'schedule_on'		=> $schedule_on,
 				'created_on'		=> now(),
 				'comments_enabled'	=> $this->input->post('comments_enabled'),
-				'restricted_to' 	=> $this->input->post('restricted_to') ? json_encode($this->input->post('restricted_to')) : '',
+				'restricted_to' 	=> $restricted ? json_encode($restricted) : '',
 			);
 
 			if ( ! empty($_FILES['thumbnail']['name']))
@@ -269,7 +275,13 @@ class Admin extends Admin_Controller {
 		}
 		
 		if ($this->form_validation->run())
-		{	
+		{
+			$restricted = array();
+			foreach ($this->input->post('restricted_to') as $group_id)
+			{
+				$group_id > 0 and $restricted[] = $group_id;
+			}
+			
 			$author_id = empty($post->author) ? $this->current_user->id : $post->author_id;
 
 			$input = array(
@@ -285,7 +297,7 @@ class Admin extends Admin_Controller {
 				'schedule_on'		=> $schedule_on,
 				'updated_on'		=> now(),
 				'comments_enabled'	=> $this->input->post('comments_enabled'),
-				'restricted_to' 	=> $this->input->post('restricted_to') ? json_encode($this->input->post('restricted_to')) : '',	
+				'restricted_to' 	=> $restricted ? json_encode($restricted) : '',	
 			);
 
 			if ( ! empty($_FILES['thumbnail']['name']))

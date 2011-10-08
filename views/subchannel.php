@@ -1,8 +1,4 @@
-<h3><?php echo $channel->title; ?></h3>
-
-<?php foreach ($sub_channels as $sub_channel): ?>
-	<h4 class="channel child"><?php echo anchor('videos/channel/'.$channel->slug.'/'.$sub_channel->slug, $sub_channel->title);?></h4>
-<?php endforeach; ?>
+<h3><?php echo $parent->title.': '.$channel->title; ?></h3>
 
 <?php if ( ! empty($videos)): ?>
 	
@@ -19,7 +15,7 @@
 					</div>
 				<?php endif; ?>
 
-				<h3><?php echo anchor('videos/view/'. $video->slug, $video->title); ?></h3>
+				<h4><?php echo anchor('videos/view/'. $video->slug, $video->title); ?></h4>
 				<!--<div class="date"><?php echo lang('video:date_label');?>: <?php echo format_date($video->created_on); ?></div>-->
 			</div>
 			<div class="intro"><?php echo $video->intro; ?></div>
