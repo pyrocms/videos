@@ -12,7 +12,10 @@ class Rss extends Public_Controller
 	
 	public function index()
 	{
-		$result = $this->video_m->limit($this->settings->item('rss_feed_items'))->get_all();
+		$result = $this->video_m
+			->limit($this->settings->item('rss_feed_items'))
+			->order_by('created_on', 'DESC')
+			->get_all();
 		
 		$this->_build_feed( $result );		
 		$this->output->set_header('Content-Type: application/rss+xml');
@@ -30,6 +33,7 @@ class Rss extends Public_Controller
 		
 		$posts = $this->video_channel_m
 			->limit($this->settings->item('rss_feed_items'))
+			->order_by('created_on', 'DESC')
 			->get_many_by('category_id', $category->id);
 		
 		$this->_build_feed( $posts );		
@@ -42,7 +46,7 @@ class Rss extends Public_Controller
 	{
 		$this->data->rss->encoding = $this->config->item('charset');
 		$this->data->rss->feed_name = $this->settings->item('site_name');
-		$this->data->rss->feed_url = base_url();
+		$this->data->rss->feed_url = site_url('videos');
 		$this->data->rss->page_description = $this->settings->item('site_name');
 		$this->data->rss->page_language = 'en-gb';
 		$this->data->rss->creator_email = $this->settings->item('contact_email');
