@@ -1,17 +1,22 @@
+<section class="title">
+	<h4><?php echo lang('video:videos_title') ?></h4>
+</section>
+
+<section class="item">
 <?php if ($videos): ?>
 
 	<?php echo form_open('admin/videos/action'); ?>
 
-	<table border="0" class="table-list">
+	<table>
 		<thead>
 			<tr>
 				<th width="20"><?php echo form_checkbox(array('name' => 'action_to_all', 'class' => 'check-all')); ?></th>
 				<th><?php echo lang('video:video_label'); ?></th>
 				<th><?php echo lang('video:channel_label'); ?></th>
 				<th width="70"><?php echo lang('video:date_label'); ?></th>
-				<th width="70"><?php echo lang('video:feature_label'); ?></th>
+				<th width="50"><?php echo lang('video:feature_label'); ?></th>
 				<th><?php echo lang('video:schedule_on_label'); ?></th>
-				<th width="180" class="align-center"><span><?php echo lang('global:actions'); ?></span></th>
+				<th width="250" class="align-center"><span><?php echo lang('global:actions'); ?></span></th>
 			</tr>
 		</thead>
 		<tfoot>
@@ -52,3 +57,4 @@
 		<h2><?php echo lang('video:currently_no_videos'); ?></h2>
 	</div>
 <?php endif; ?>
+</section>

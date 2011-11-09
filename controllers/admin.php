@@ -1,13 +1,19 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
-
 /**
  *
  * @package  	PyroCMS
- * @subpackage  Categories
- * @channel  	Module
+ * @subpackage  Videos
+ * @category  	Module
  */
 class Admin extends Admin_Controller {
 
+	/**
+	 * The current active section
+	 * @access protected
+	 * @var string
+	 */
+	protected $section = 'videos';
+	
 	/**
 	 * Array that contains the validation rules
 	 * @access protected
@@ -162,9 +168,12 @@ class Admin extends Admin_Controller {
 		if ($this->form_validation->run())
 		{
 			$restricted = array();
-			foreach ($this->input->post('restricted_to') as $group_id)
+			if ($this->input->post('restricted_to'))
 			{
-				$group_id > 0 and $restricted[] = $group_id;
+				foreach ($this->input->post('restricted_to') as $group_id)
+				{
+					$group_id > 0 and $restricted[] = $group_id;
+				}
 			}
 			
 			$input = array(
@@ -277,9 +286,12 @@ class Admin extends Admin_Controller {
 		if ($this->form_validation->run())
 		{
 			$restricted = array();
-			foreach ($this->input->post('restricted_to') as $group_id)
+			if ($this->input->post('restricted_to'))
 			{
-				$group_id > 0 and $restricted[] = $group_id;
+				foreach ($this->input->post('restricted_to') as $group_id)
+				{
+					$group_id > 0 and $restricted[] = $group_id;
+				}
 			}
 			
 			$author_id = empty($post->author) ? $this->current_user->id : $post->author_id;
@@ -345,7 +357,7 @@ class Admin extends Admin_Controller {
 
 			if (isset($_POST[$rule['field']]))
 			{
-				$video->{$rule['field']} = $this->form_validation->{$rule['field']};
+				$video->{$rule['field']} = set_value($rule['field']);
 			}
 		}
 		

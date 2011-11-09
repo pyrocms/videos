@@ -2,7 +2,7 @@
 
 class Module_Videos extends Module {
 
-	public $version = '1.3.2';
+	public $version = '1.4.0';
 
 	public function info()
 	{
@@ -17,6 +17,29 @@ class Module_Videos extends Module {
 			'backend'	=> TRUE,
 			'skip_xss'	=> TRUE,
 			'menu'		=> 'content',
+			
+			'sections' => array(
+			    'videos' => array(
+				    'name' => 'video:videos_title',
+				    'uri' => 'admin/videos',
+				    'shortcuts' => array(
+						array(
+					 	   'name' => 'video:create_title',
+						    'uri' => 'admin/videos/create',
+						),
+					),
+				),
+				'channels' => array(
+				    'name' => 'video_channel:list_title',
+				    'uri' => 'admin/videos/channels',
+				    'shortcuts' => array(
+						array(
+						    'name' => 'video_channel:create_title',
+						    'uri' => 'admin/videos/channels/create',
+						),
+				    ),
+			    ),
+		    ),
 		);
 	}
 
@@ -104,6 +127,8 @@ VALUES (
 				);");
 				
 				$this->db->delete('settings', array('slug' => 'video_display_size'));
+				
+			break;
 			
 			case '1.1':
 			
@@ -118,6 +143,8 @@ VALUES (
 						'null' => false,
 					),
 				));
+
+			break;
 				
 			case '1.2.0':
 			case '1.2.1':
@@ -130,6 +157,8 @@ VALUES (
 						'default' => 1,
 					),
 				));
+
+			break;
 				
 			case '1.3.0':
 
@@ -141,6 +170,8 @@ VALUES (
 						'default' => 0,
 					),
 				));
+				
+			break;
 			
 			case '1.3.1':
 			
@@ -153,6 +184,8 @@ VALUES (
 				$this->db->query('ALTER TABLE '.$this->db->dbprefix('video_channels').'
 				CHANGE `title` `title` VARCHAR( 100 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 				CHANGE `slug` `slug` VARCHAR( 100 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL');
+				
+			break;
 
 		}
 		

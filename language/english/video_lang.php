@@ -25,10 +25,9 @@ $lang['video:comments_enabled_label']         = 'Comments Enabled';
 $lang['video:schedule_on_label']              = 'Scheduled';
 
 // titles
-$lang['video:create_title']                   = 'Add video';
-$lang['video:edit_title']                     = 'Edit video "%s"';
+$lang['video:create_title']                   = 'Add Video';
+$lang['video:edit_title']                     = 'Edit Video "%s"';
 $lang['video:video_title']                    = 'Video';
-$lang['video:list_title']                     = 'List videos';
 $lang['video:videos_title']                   = 'Videos';
 
 $lang['video:related_videos']                 = 'Related videos';

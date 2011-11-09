@@ -6,8 +6,15 @@
  * @channel  	Module
  * @author  	Phil Sturgeon - PyroCMS Dev Team
  */
-class Admin_Channels extends Admin_Controller
-{
+class Admin_Channels extends Admin_Controller {
+	
+	/**
+	 * The current active section
+	 * @access protected
+	 * @var string
+	 */
+	protected $section = 'channels';
+	
 	/**
 	 * Array that contains the validation rules
 	 * @access protected
