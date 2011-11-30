@@ -25,10 +25,10 @@ class Admin extends Admin_Controller {
 			'label' => 'lang:video:title_label',
 			'rules' => 'trim|htmlspecialchars|required|max_length[100]'
 		),
-		array(
+		'slug' => array(
 			'field' => 'slug',
 			'label' => 'lang:video:slug_label',
-			'rules' => 'trim|required|alpha_dot_dash|max_length[100]|callback__check_slug'
+			'rules' => 'trim|required|alpha_dot_dash|max_length[100]'
 		),
 		array(
 			'field' => 'channel_id',
@@ -153,6 +153,9 @@ class Admin extends Admin_Controller {
 	{
 		$this->load->library('form_validation');
 
+		// Set the id so the slug can be checked
+		$this->validation_rules['slug']['rules'] .= '|callback__check_slug['.$id.']';
+
 		$this->form_validation->set_rules($this->validation_rules);
 		
 		if ($this->input->post('schedule_on'))
@@ -218,6 +221,7 @@ class Admin extends Admin_Controller {
 			else
 			{
 				$this->session->set_flashdata('error', lang('video:post_add_error'));
+				goto display;
 			}
 
 			// Redirect back to the form or main page
@@ -262,6 +266,9 @@ class Admin extends Admin_Controller {
 
 		$this->load->library('form_validation');
 
+		// Set the id so the slug can be checked
+		$this->validation_rules['slug']['rules'] .= '|callback__check_slug['.$id.']';
+
 		$this->form_validation->set_rules($this->validation_rules);
 
 		$video = $this->video_m->get($id);
@@ -271,8 +278,6 @@ class Admin extends Admin_Controller {
 		// It's stored as a CSV list
 		$video->restricted_to = json_decode($video->restricted_to);
 
-		$this->id = $video->id;
-		
 		if ($this->input->post('schedule_on'))
 		{
 			$schedule_on = strtotime(sprintf('%s %s:%s', $this->input->post('schedule_on'), $this->input->post('schedule_on_hour'), $this->input->post('schedule_on_minute')));
@@ -553,9 +558,9 @@ class Admin extends Admin_Controller {
 	 * @param string slug The Slug to check
 	 * @return bool
 	 */
-	public function _check_slug($slug = '')
+	public function _check_slug($slug, $id = null)
 	{
-		if ( ! $this->video_m->check_exists('slug', $slug, isset($this->id) ? $this->id : 0))
+		if ( ! $this->video_m->check_exists('slug', $slug, $id))
 		{
 			$this->form_validation->set_message('_check_slug', sprintf(lang('video:already_exist_error'), lang('video:slug_label')));
 			return FALSE;

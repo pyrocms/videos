@@ -20,118 +20,110 @@
 		</ul>
 
 		<!-- Content tab -->
-		<div id="video-content-tab">
-			<ul>
-				<li>
-					<label for="title"><?php echo lang('video:title_label'); ?></label><br>
-					<?php echo form_input('title', htmlspecialchars_decode($video->title), 'maxlength="100"'); ?>
-					<span class="required-icon tooltip"><?php echo lang('required_label'); ?></span>
-				</li>
-				
-				<hr>
-				
-				<li>
-					<label for ="slug"><?php echo lang('video:slug_label'); ?></label><br>
-					<?php echo site_url('videos/view') ?>/<?php echo form_input('slug', $video->slug, 'maxlength="100" class="width-20"'); ?>
-					<span class="required-icon tooltip"><?php echo lang('required_label'); ?></span>
-				</li>
+		<div id="video-content-tab" class="form_inputs">
+			<fieldset>
+				<ul>
+					<li>
+						<label for="title"><?php echo lang('video:title_label'); ?><span>*</span></label>
+						<?php echo form_input('title', htmlspecialchars_decode($video->title), 'maxlength="100"'); ?>
+					</li>
 
-				<hr>
+					<li>
+						<label for ="slug"><?php echo lang('video:slug_label'); ?><span>*</span></label>
+						<?php echo site_url('videos/view') ?>/<?php echo form_input('slug', $video->slug, 'maxlength="100" class="width-20"'); ?>
+					</li>
 			
-				<?php if (Settings::get('video_thumb_enabled')): ?>
-				<li>
-					<label for="thumbnail"><?php echo lang('video:thumbnail_label'); ?></label><br>
+					<?php if (Settings::get('video_thumb_enabled')): ?>
+					<li>
+						<label for="thumbnail"><?php echo lang('video:thumbnail_label'); ?><span>*</span></label>
 	
-						<?php echo form_upload('thumbnail'); ?>
+							<?php echo form_upload('thumbnail'); ?>
 
-						<?php if ( ! empty($video->thumbnail)): ?>
-							<br /><img src="<?php echo base_url().UPLOAD_PATH.'videos/thumbs/'.$video->thumbnail ?>" />
-						<?php endif; ?>
-				</li>
+							<?php if ( ! empty($video->thumbnail)): ?>
+								<br /><img src="<?php echo base_url().UPLOAD_PATH.'videos/thumbs/'.$video->thumbnail ?>" />
+							<?php endif; ?>
+					</li>
+					
+					<? endif; ?>
+					<li class="even">
+						<label for="channel_id"><?php echo lang('video:channel_label'); ?></label>
+						
+						<select name="channel_id">
+					
+							<option value=""><?php echo lang('select.none') ?></option>
+					
+							<?php foreach ($channels[0] as $channel): ?>
+								<option value="<?php echo $channel->id ?>" <?php echo $video->channel_id == $channel->id ? 'selected="selected"' : '' ?>><?php echo $channel->title; ?></option>
 
-				<hr>
-					
-				<? endif; ?>
-				<li class="even">
-					<label for="channel_id"><?php echo lang('video:channel_label'); ?></label><br>
+								<?php if ( ! empty($channels[$channel->id])): ?>
+									<?php foreach ($channels[$channel->id] as $channel): ?>
+									<option value="<?php echo $channel->id ?>" <?php echo $video->channel_id == $channel->id ? 'selected="selected"' : '' ?>><?php echo '-- '.$channel->title; ?></option>
+									<?php endforeach; ?>
+								<?php endif ?>
+							<?php endforeach; ?>
+							</select>
 				
-					<select name="channel_id">
-					
-						<option value=""><?php echo lang('select.none') ?></option>
-					
-						<?php foreach ($channels[0] as $channel): ?>
-							<option value="<?php echo $channel->id ?>" <?php echo $video->channel_id == $channel->id ? 'selected="selected"' : '' ?>><?php echo $channel->title; ?></option>
+							[ <?php echo anchor('admin/videos/channels/create', lang('video:new_channel_label'), 'target="_blank"'); ?> ]
+					</li>
+				
+					<li>
+						<label for="intro"><?php echo lang('video:intro_label'); ?><span>*</span></label>
+						<?php echo form_input('intro', htmlspecialchars_decode($video->intro), 'maxlength="80"'); ?>
+					</li>
 
-							<?php if ( ! empty($channels[$channel->id])): ?>
-								<?php foreach ($channels[$channel->id] as $channel): ?>
-								<option value="<?php echo $channel->id ?>" <?php echo $video->channel_id == $channel->id ? 'selected="selected"' : '' ?>><?php echo '-- '.$channel->title; ?></option>
-								<?php endforeach; ?>
-							<?php endif ?>
-						<?php endforeach; ?>
-						</select>
-				
-						[ <?php echo anchor('admin/videos/channels/create', lang('video:new_channel_label'), 'target="_blank"'); ?> ]
-				</li>
-				
-				<hr>
-				
-				<li>
-					<label for="intro"><?php echo lang('video:intro_label'); ?></label><br>
-					<?php echo form_input('intro', htmlspecialchars_decode($video->intro), 'maxlength="80"'); ?>
-					<span class="required-icon tooltip"><?php echo lang('required_label'); ?></span>
-				</li>
-				<hr>
-				<li class="even">
-					<label for="keywords"><?php echo lang('global:keywords'); ?></label><br>
-					<?php echo form_input('keywords', $video->keywords); ?>
-				</li>
-				<hr>
-				<li>
-					<label class="description" for="description"><?php echo lang('global:description'); ?></label><br>
-					<?php echo form_textarea(array('name' => 'description', 'value' => $video->description, 'rows' => 5, 'class' => 'wysiwyg-simple')); ?>
-					<span class="required-icon tooltip"><?php echo lang('required_label'); ?></span>
-				</li>
-				<hr>
-				<li class="even">
-					<label for="embed_code"><?php echo lang('video:embed_code_label'); ?></label><br>
-					<?php echo form_textarea('embed_code', $video->embed_code); ?>
-					<span class="required-icon tooltip"><?php echo lang('required_label'); ?></span>
-				</li>
-			</ul>
+					<li class="even">
+						<label for="keywords"><?php echo lang('global:keywords'); ?></label>
+						<?php echo form_input('keywords', $video->keywords); ?>
+					</li>
+
+					<li>
+						<label class="description" for="description"><?php echo lang('global:description'); ?><span>*</span></label>
+						<br style="clear: both;">
+						<?php echo form_textarea(array('name' => 'description', 'value' => $video->description, 'rows' => 5, 'class' => 'wysiwyg-simple')); ?>
+					</li>
+
+					<li class="even">
+						<label for="embed_code"><?php echo lang('video:embed_code_label'); ?><span>*</span></label>
+						<?php echo form_textarea('embed_code', $video->embed_code); ?>
+					</li>
+				</ul>
 			
-			<?php echo form_hidden('width', $video->width); ?>
-			<?php echo form_hidden('height', $video->height); ?>
+				<?php echo form_hidden('width', $video->width); ?>
+				<?php echo form_hidden('height', $video->height); ?>
+			</fieldset>
 		</div>
 
 		<!-- Options tab -->
-		<div id="video-options-tab">
-			<ul>
-				<li class="date-meta">
-					<label for="schedule_on"><?php echo lang('video:schedule_on_label');?></label><br>
-					<div style="float:left;">
-						<?php echo form_input('schedule_on', date('Y-m-d', $video->schedule_on), 'maxlength="10" id="datepicker" class="text width-20"'); ?>
-					</div>
-					<label class="time-meta"><?php echo lang('video:time_label'); ?></label><br>
-					<?php echo form_dropdown('schedule_on_hour', $hours, date('H', $video->schedule_on)) ?>
-					<?php echo form_dropdown('schedule_on_minute', $minutes, date('i', $video->schedule_on)) ?>
+		<div id="video-options-tab" class="form_inputs">
+			<fieldset>
+				<ul>
+					<li class="date-meta">
+						<label for="schedule_on"><?php echo lang('video:schedule_on_label');?></label>
+						<div style="float:left;">
+							<?php echo form_input('schedule_on', date('Y-m-d', $video->schedule_on), 'maxlength="10" id="datepicker" class="text width-20"'); ?>
+						</div>
+						<label class="time-meta"><?php echo lang('video:time_label'); ?></label>
+						<?php echo form_dropdown('schedule_on_hour', $hours, date('H', $video->schedule_on)) ?>
+						<?php echo form_dropdown('schedule_on_minute', $minutes, date('i', $video->schedule_on)) ?>
 				
-				</li>
-				<hr>
-				<li class="even">
-					<label for="restricted_to[]"><?php echo lang('video:access_label');?></label><br>
-					<?php echo form_multiselect('restricted_to[]', array(0 => lang('select.any')) + $group_options, $video->restricted_to, 'size="'.(($count = count($group_options)) > 1 ? $count : 2).'"'); ?>
-				</li>
-				<hr>
-				<li>
-					<label for="comments_enabled"><?php echo lang('video:comments_enabled_label');?></label><br>
-					<?php echo form_checkbox('comments_enabled', 1, ($this->method == 'create' && ! $_POST) or $video->comments_enabled == 1); ?>
-				</li>
-			</ul>
+					</li>
+					
+					<li class="even">
+						<label for="restricted_to[]"><?php echo lang('video:access_label');?></label>
+						<?php echo form_multiselect('restricted_to[]', array(0 => lang('select.any')) + $group_options, $video->restricted_to, 'size="'.(($count = count($group_options)) > 1 ? $count : 2).'"'); ?>
+					</li>
+					
+					<li>
+						<label for="comments_enabled"><?php echo lang('video:comments_enabled_label');?></label>
+						<?php echo form_checkbox('comments_enabled', 1, ($this->method == 'create' && ! $_POST) or $video->comments_enabled == 1); ?>
+					</li>
+				</ul>
+			</fieldset>
 		</div>
 
 	</div>
 
-	<div class="buttons float-right padding-top">
+	<div class="buttons">
 		<?php $this->load->view('admin/partials/buttons', array('buttons' => array('save', 'save_exit', 'cancel'))); ?>
 	</div>
 

@@ -39,6 +39,7 @@ $lang['video:no_videos']                      = 'There are no videos.';
 $lang['video:subscripe_to_rss_desc']          = 'Get videos straight away by subscribing to our RSS feed. You can do this via most popular e-mail clients, or try <a href="http://reader.google.co.uk/">Google Reader</a>.';
 $lang['video:currently_no_videos']            = 'There are no videos at the moment.';
 $lang['video:video_add_success']              = 'The video "%s" was added.';
+$lang['video:already_exist_error']			  = 'A video with the slug "%s" already exists.';
 $lang['video:video_add_error']                = 'An error occured.';
 $lang['video:edit_success']                   = 'The video "%s" was updated.';
 $lang['video:edit_error']                     = 'An error occurred.';

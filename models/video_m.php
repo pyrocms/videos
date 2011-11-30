@@ -42,28 +42,23 @@ class Video_m extends MY_Model {
 	
 	public function get_related($video, $limit = null)
 	{
-		if (empty($video->tags))
+		if (empty($video->keywords))
 		{
 			return array();
 		}
 
-		foreach (explode(',', $video->tags) as $tag)
-		{
-			$tag = trim($tag);
-	
-			$this->db
-				->or_like('tags', $tag.",", 'after')
-				->or_like('tags', $tag, 'before')
-				->or_like('tags', $tag.",", 'both')
-				->or_like('tags', $tag);
-		}
-
-		// TODO: CodeIgniter will shove this in without groupings . Hacked in view for now
-		// $this->db->where('id !=', $video->id);
-
-		$this->db->order_by('RAND()', null, false);
-
-		return $this->db->get('videos')->result();
+		return $this->db
+			->select('videos.*')
+			->distinct()
+			->join('keywords_applied', 'videos.keywords = keywords_applied.hash')
+			->join('keywords', 'keywords_applied.keyword_id = csuktv_keywords.id')
+			->where_in('keywords.name', $video->keywords)
+			->where('videos.id !=', $video->id)
+			->join('video_channels', 'videos.channel_id = video_channels.id', 'left')
+			->order_by('RAND()', null, false)
+			->limit($limit)
+			->get('videos')
+			->result();
 	}
 
 	public function count_by($params = array())
