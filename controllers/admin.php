@@ -154,7 +154,7 @@ class Admin extends Admin_Controller {
 		$this->load->library('form_validation');
 
 		// Set the id so the slug can be checked
-		$this->validation_rules['slug']['rules'] .= '|callback__check_slug['.$id.']';
+		$this->validation_rules['slug']['rules'] .= '|callback__check_slug';
 
 		$this->form_validation->set_rules($this->validation_rules);
 		

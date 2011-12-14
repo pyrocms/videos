@@ -51,7 +51,7 @@ class Video_m extends MY_Model {
 			->select('videos.*')
 			->distinct()
 			->join('keywords_applied', 'videos.keywords = keywords_applied.hash')
-			->join('keywords', 'keywords_applied.keyword_id = csuktv_keywords.id')
+			->join('keywords', 'keywords_applied.keyword_id = keywords.id')
 			->where_in('keywords.name', $video->keywords)
 			->where('videos.id !=', $video->id)
 			->join('video_channels', 'videos.channel_id = video_channels.id', 'left')

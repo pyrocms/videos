@@ -182,9 +182,10 @@ class Videos extends Public_Controller
 			redirect('videos');
 		}
 
-		if (json_decode($video->restricted_to))
+		// Is this video restricted?
+		if (($video->restricted_to = json_decode($video->restricted_to)) and $video->restricted_to[0] != "0") // hack
 		{
-			$video->restricted_to = json_decode($video->restricted_to);
+			
 
 			// Are they logged in and an admin or a member of the correct group?
 			if ( ! $this->current_user)
