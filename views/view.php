@@ -13,7 +13,7 @@
 			<div class="video_info_content">
 				<p><?php echo $video->description ?></p>
 				
-				<p>Ep 3 of 25 in <?php echo anchor('videos/channel/'.$video->channel->slug, $video->channel->title);?><br />
+				<p>Episode <?php echo $video->episode ?> in <?php echo anchor('videos/channel/'.$video->channel->slug, $video->channel->title);?><br />
 				<!--<?php echo lang('video:views_label');?>: <?php echo $video->views ?>-->
 				Posted: <?php echo format_date($video->created_on, 'jS \of F Y'); ?></p>
 				
@@ -44,8 +44,6 @@
 		<h3><?php echo lang('video:related_videos') ?></h3>
 
 		<?php foreach ($related_videos as $related_video): ?>
-		
-			<?php /* HACK */ if ($video->id == $related_video->id) continue; ?>
 	
 			<div class="video">
 
@@ -88,7 +86,7 @@
 				<?php if ($channel_video->thumbnail): ?>
 				<div class="thumbnail">
 					<a href="<?php echo site_url('videos/view/'. $channel_video->slug) ?>">
-						<img src="<?php echo base_url().UPLOAD_PATH ?>videos/thumbs/<?php echo $related_video->thumbnail ?>" width="<?php echo $thumb_width ?>" />
+						<img src="<?php echo base_url().UPLOAD_PATH ?>videos/thumbs/<?php echo $channel_video->thumbnail ?>" width="<?php echo $thumb_width ?>" />
 					</a>
 				</div>
 			

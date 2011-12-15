@@ -24,7 +24,7 @@ class Admin_Channels extends Admin_Controller {
 		array(
 			'field' => 'title',
 			'label' => 'lang:video_channel:title_label',
-			'rules' => 'trim|required|max_length[100]|callback__check_title'
+			'rules' => 'trim|required|max_length[100]'
 		),
 		array(
 			'field' => 'description',
@@ -50,8 +50,6 @@ class Admin_Channels extends Admin_Controller {
 		$this->load->model('video_channel_m');
 		$this->lang->load('channel');
 		$this->lang->load('video');
-		
-	    $this->template->set_partial('shortcuts', 'admin/partials/shortcuts');
 		
 		// Load the validation library along with the rules
 		$this->load->library('form_validation');
