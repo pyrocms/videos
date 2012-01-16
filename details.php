@@ -2,7 +2,7 @@
 
 class Module_Videos extends Module {
 
-	public $version = '1.4.1';
+	public $version = '1.4.2';
 
 	public function info()
 	{
@@ -88,7 +88,7 @@ class Module_Videos extends Module {
 			  PRIMARY KEY (`id`),
 			  UNIQUE KEY `title` (`title`),
 			  KEY `channel_id - normal` (`channel_id`),
-			  FULLTEXT KEY `search` (`title`,`intro`,`tags`,`description`)
+			  FULLTEXT KEY `search` (`title`,`intro`,`description`)
 			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Videos.';
 		";
 
