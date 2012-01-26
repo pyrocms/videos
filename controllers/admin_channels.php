@@ -51,8 +51,6 @@ class Admin_Channels extends Admin_Controller {
 		$this->lang->load('channel');
 		$this->lang->load('video');
 		
-	    $this->template->set_partial('shortcuts', 'admin/partials/shortcuts');
-		
 		// Load the validation library along with the rules
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules($this->validation_rules);

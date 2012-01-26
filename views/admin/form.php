@@ -24,24 +24,24 @@
 			<fieldset>
 				<ul>
 					<li>
-						<label for="title"><?php echo lang('video:title_label'); ?><span>*</span></label>
+						<label for="title"><?php echo lang('video:title_label'); ?> <span>*</span></label>
 						<?php echo form_input('title', htmlspecialchars_decode($video->title), 'maxlength="100"'); ?>
 					</li>
 
 					<li>
-						<label for ="slug"><?php echo lang('video:slug_label'); ?><span>*</span></label>
+						<label for ="slug"><?php echo lang('video:slug_label'); ?> <span>*</span></label>
 						<?php echo site_url('videos/view') ?>/<?php echo form_input('slug', $video->slug, 'maxlength="100" class="width-20"'); ?>
 					</li>
 			
 					<?php if (Settings::get('video_thumb_enabled')): ?>
 					<li>
-						<label for="thumbnail"><?php echo lang('video:thumbnail_label'); ?><span>*</span></label>
+						<label for="thumbnail"><?php echo lang('video:thumbnail_label'); ?> <span>*</span></label>
 	
-							<?php echo form_upload('thumbnail'); ?>
+						<?php echo form_upload('thumbnail'); ?>
 
-							<?php if ( ! empty($video->thumbnail)): ?>
-								<br /><img src="<?php echo base_url().UPLOAD_PATH.'videos/thumbs/'.$video->thumbnail ?>" />
-							<?php endif; ?>
+						<?php if ( ! empty($video->thumbnail)): ?>
+							<br /><img src="<?php echo base_url().UPLOAD_PATH.'videos/thumbs/'.$video->thumbnail ?>" />
+						<?php endif; ?>
 					</li>
 					
 					<? endif; ?>
@@ -67,7 +67,7 @@
 					</li>
 				
 					<li>
-						<label for="intro"><?php echo lang('video:intro_label'); ?><span>*</span></label>
+						<label for="intro"><?php echo lang('video:intro_label'); ?> <span>*</span></label>
 						<?php echo form_input('intro', htmlspecialchars_decode($video->intro), 'maxlength="80"'); ?>
 					</li>
 
@@ -77,13 +77,13 @@
 					</li>
 
 					<li>
-						<label class="description" for="description"><?php echo lang('global:description'); ?><span>*</span></label>
+						<label class="description" for="description"><?php echo lang('global:description'); ?> <span>*</span></label>
 						<br style="clear: both;">
 						<?php echo form_textarea(array('name' => 'description', 'value' => $video->description, 'rows' => 5, 'class' => 'wysiwyg-simple')); ?>
 					</li>
 
 					<li class="even">
-						<label for="embed_code"><?php echo lang('video:embed_code_label'); ?><span>*</span></label>
+						<label for="embed_code"><?php echo lang('video:embed_code_label'); ?> <span>*</span></label>
 						<?php echo form_textarea('embed_code', $video->embed_code); ?>
 					</li>
 				</ul>

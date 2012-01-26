@@ -1,6 +1,6 @@
 <?php if ( ! empty($videos)): ?>
 	
-	<?php function display_videos($videos) { foreach ($videos as $video): ?>
+	<?php function display_videos($videos, $thumb_width) { foreach ($videos as $video): ?>
 	
 	<div class="video listing <?php echo $video->channel_parent_id ? 'child' : 'parent' ?>">
 		<!-- Post heading -->
@@ -12,7 +12,7 @@
 				</div>
 			<?php endif; ?>
 
-			<h4><?php echo $video->title; ?></h4>
+			<h4><?php echo anchor('videos/view/'.$video->slug, $video->title); ?></h4>
 		</div>
 		<div class="intro"><?php echo $video->intro; ?></div>
 		
@@ -42,7 +42,7 @@
 		
 		<?php if (empty($videos[$channel->id])) continue ?>
 		
-		<?php echo display_videos($videos[$channel->id]) ?>
+		<?php echo display_videos($videos[$channel->id], $thumb_width) ?>
 		
 	<?php endforeach; ?>
 

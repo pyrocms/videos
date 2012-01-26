@@ -200,7 +200,7 @@ class Videos extends Public_Controller
 		}
 		
 		// Convert keywords into something useful
-		$video->keywords = Keywords::get($video->keywords);
+		$video->keywords = Keywords::get_array($video->keywords);
 		
 		// Find out how many videos are in this channel
 		$channel->video_count = $this->video_channel_m->count_videos($channel->id);
