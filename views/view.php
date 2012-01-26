@@ -13,7 +13,7 @@
 			<div class="video_info_content">
 				<p><?php echo $video->description ?></p>
 				
-				<p>Ep 3 of 25 in <?php echo anchor('videos/channel/'.$video->channel->slug, $video->channel->title);?><br />
+				<p><?php echo anchor('videos/channel/'.$video->channel->slug, $video->channel->title);?><br />
 				<!--<?php echo lang('video:views_label');?>: <?php echo $video->views ?>-->
 				Posted: <?php echo format_date($video->created_on, 'jS \of F Y'); ?></p>
 				
