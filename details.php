@@ -2,7 +2,7 @@
 
 class Module_Videos extends Module {
 
-	public $version = '1.4.2';
+	public $version = '1.5.0';
 
 	public function info()
 	{
