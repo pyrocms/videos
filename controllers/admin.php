@@ -138,7 +138,7 @@ class Admin extends Admin_Controller {
 		$this->template
 			->title($this->module_details['name'])
 			->set_partial('filters', 'admin/partials/filters')
-			->append_metadata(js('admin/filter.js'))
+			->append_js('admin/filter.js')
 			->set('pagination', $pagination)
 			->set('videos', $videos)
 			->build('admin/index', $this->data);
@@ -249,7 +249,7 @@ class Admin extends Admin_Controller {
 		$this->template
 			->title($this->module_details['name'], lang('video:create_title'))
 			->append_metadata($this->load->view('fragments/wysiwyg', $this->data, TRUE))
-			->append_metadata(js('video_form.js', 'videos'))
+			->append_js('module::video_form.js')
 			->set('video', $video)
 			->build('admin/form');
 	}
@@ -372,8 +372,8 @@ class Admin extends Admin_Controller {
 
 		$this->template
 			->title($this->module_details['name'], sprintf(lang('video:edit_title'), $video->title))
-			->append_metadata($this->load->view('fragments/wysiwyg', $this->data, TRUE))
-			->append_metadata(js('video_form.js', 'videos'))
+			->append_metadata($this->load->view('fragments/wysiwyg', array(), TRUE))
+			->append_js('module::video_form.js')
 			->set('video', $video)
 			->build('admin/form');
 	}
@@ -386,8 +386,8 @@ class Admin extends Admin_Controller {
 		$config['upload_path'] = $upload_path;
 		$config['allowed_types'] = 'gif|jpg|jpeg|png';
 		$config['encrypt_name']	= true;
-		$config['max_width']  = '1200';
-		$config['max_height']  = '800';
+		$config['max_width']  = 1200;
+		$config['max_height']  = 800;
 
 		$this->load->library('upload', $config);
 		

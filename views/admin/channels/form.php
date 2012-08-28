@@ -13,7 +13,7 @@
 	<fieldset>
 		<ul>
 			<li class="even">
-				<label for="title"><?php echo lang('title_label');?> <span>*</span></label>
+				<label for="title"><?php echo lang('global:title');?> <span>*</span></label>
 				<?php echo form_input('title', $channel->title); ?>
 			</li>
 			<li>

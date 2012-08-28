@@ -24,7 +24,7 @@
 			<fieldset>
 				<ul>
 					<li>
-						<label for="title"><?php echo lang('video:title_label'); ?> <span>*</span></label>
+						<label for="title"><?php echo lang('global:title'); ?> <span>*</span></label>
 						<?php echo form_input('title', htmlspecialchars_decode($video->title), 'maxlength="100"'); ?>
 					</li>
 
