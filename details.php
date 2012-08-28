@@ -2,7 +2,7 @@
 
 class Module_Videos extends Module {
 
-	public $version = '1.5.0';
+	public $version = '1.5.1';
 
 	public function info()
 	{
@@ -70,6 +70,7 @@ class Module_Videos extends Module {
 			  `slug` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
 			  `channel_id` int(11) NOT NULL,
 			  `thumbnail` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+			  `image` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
 			  `episode` int unsigned DEFAULT 0,
 			  `intro` varchar(80) COLLATE utf8_unicode_ci NOT NULL,
 			  `description` text COLLATE utf8_unicode_ci NOT NULL,
@@ -193,7 +194,17 @@ class Module_Videos extends Module {
 				CHANGE `slug` `slug` VARCHAR( 100 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL');
 				
 			break;
-
+			
+			case '1.5.0':
+			
+				$this->dbforge->add_column('videos', array(
+					'image' => array(
+						'type' => 'varchar',
+						'constraint' => 50,
+						'null' => true,
+					),
+				));
+			break;
 		}
 		
 		return TRUE;
